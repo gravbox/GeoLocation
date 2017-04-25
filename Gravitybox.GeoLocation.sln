@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelProject", "ModelProject\ModelProject.csproj", "{31FDA387-EFBE-4088-B85C-156C1D59C134}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.GeoLocation.Interfaces", "Gravitybox.GeoLocation.Interfaces\Gravitybox.GeoLocation.Interfaces.csproj", "{134DE755-6D44-4780-BD1E-E0756D2C760C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.LocationService.EFDAL", "Gravitybox.LocationService.EFDAL\Gravitybox.LocationService.EFDAL.csproj", "{9F932945-7F92-42A5-AC4A-EEE176F57CCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.LocationService.Install", "Gravitybox.LocationService.Install\Gravitybox.LocationService.Install.csproj", "{5E219C6C-BA45-4C24-907C-00A5E6D193EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.Webservice.GeoLocationService", "Gravitybox.Webservice.GeoLocationService\Gravitybox.Webservice.GeoLocationService.csproj", "{5B64BBE5-97BC-4D5F-B1CB-CB716F35BB68}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31FDA387-EFBE-4088-B85C-156C1D59C134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31FDA387-EFBE-4088-B85C-156C1D59C134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31FDA387-EFBE-4088-B85C-156C1D59C134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31FDA387-EFBE-4088-B85C-156C1D59C134}.Release|Any CPU.Build.0 = Release|Any CPU
+		{134DE755-6D44-4780-BD1E-E0756D2C760C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{134DE755-6D44-4780-BD1E-E0756D2C760C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{134DE755-6D44-4780-BD1E-E0756D2C760C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{134DE755-6D44-4780-BD1E-E0756D2C760C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F932945-7F92-42A5-AC4A-EEE176F57CCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F932945-7F92-42A5-AC4A-EEE176F57CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F932945-7F92-42A5-AC4A-EEE176F57CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F932945-7F92-42A5-AC4A-EEE176F57CCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E219C6C-BA45-4C24-907C-00A5E6D193EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E219C6C-BA45-4C24-907C-00A5E6D193EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E219C6C-BA45-4C24-907C-00A5E6D193EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E219C6C-BA45-4C24-907C-00A5E6D193EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B64BBE5-97BC-4D5F-B1CB-CB716F35BB68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B64BBE5-97BC-4D5F-B1CB-CB716F35BB68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B64BBE5-97BC-4D5F-B1CB-CB716F35BB68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B64BBE5-97BC-4D5F-B1CB-CB716F35BB68}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

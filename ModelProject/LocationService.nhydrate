@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<nHydrateModel dslVersion="6.0.0.203" Id="792c16d4-9353-4f34-bf2b-4c66aa688643" companyName="Gravitybox" projectName="LocationService" version="0.0.0.3" timestampColumnName="TimeStamp" modelVersion="5.1.2.115" useGeneratedCRUD="false" diagramVisibility="Function, StoredProcedure, View">
+  <entities>
+    <entity Id="82c6a2d7-716d-43e6-8370-1a95cfe6e486" name="Zip" copyStateInfo="">
+      <fields>
+        <entityHasFields Id="409e5416-f0e0-4fca-95a3-b69f85b848cc">
+          <field Id="53d912d3-d058-43f8-892a-6294acd74ce4" name="City" nullable="false" isIndexed="true" min="NaN" max="NaN" scale="0" sortOrder="1" />
+        </entityHasFields>
+        <entityHasFields Id="c4ccb9e3-12aa-4f57-8b66-d578a0b303d3">
+          <field Id="19f1d7eb-0833-430f-b693-d517ef9e6d83" name="Latitude" dataType="Float" length="8" min="NaN" max="NaN" scale="0" sortOrder="2" />
+        </entityHasFields>
+        <entityHasFields Id="49bc2b6f-618c-4635-b996-de5402474f47">
+          <field Id="d3c67466-2829-4710-b139-81baffdc17c8" name="Longitude" dataType="Float" length="8" min="NaN" max="NaN" scale="0" sortOrder="3" />
+        </entityHasFields>
+        <entityHasFields Id="9cfb96ab-d60f-47e0-99d2-1620a81e4f6e">
+          <field Id="d09215ea-40b2-4e31-b968-8f1898bec7bc" name="Name" nullable="false" isIndexed="true" length="10" min="NaN" max="NaN" scale="0" sortOrder="4" />
+        </entityHasFields>
+        <entityHasFields Id="892f8042-8bfb-4d3e-8a85-02d73453e10c">
+          <field Id="10527e9b-46b6-4f2f-b301-394fe9c4cc20" name="State" nullable="false" isIndexed="true" min="NaN" max="NaN" scale="0" sortOrder="5" />
+        </entityHasFields>
+        <entityHasFields Id="23e418ae-785d-47a2-b700-78b638be48cf">
+          <field Id="2680d149-9494-4f20-a876-95753b400683" name="ZipId" nullable="false" dataType="Int" identity="Database" isIndexed="true" isUnique="true" length="4" min="NaN" max="NaN" isPrimaryKey="true" scale="0" sortOrder="6" />
+        </entityHasFields>
+        <entityHasFields Id="105204c4-a7e4-4936-a6a2-ba767cac063a">
+          <field Id="29e82b87-ca95-4881-aa1f-160144d6fe7f" name="Population" dataType="Int" isIndexed="true" length="4" min="NaN" max="NaN" scale="0" sortOrder="7" />
+        </entityHasFields>
+      </fields>
+      <indexes>
+        <entityHasIndexes Id="1bf3644c-8cf2-4129-9aec-3ce09d5092d4">
+          <index Id="c027f3bd-552a-427f-896a-79247d729ac9" parentEntityID="82c6a2d7-716d-43e6-8370-1a95cfe6e486" isUnique="true" indexType="PrimaryKey" clustered="true">
+            <indexColumns>
+              <indexHasIndexColumns Id="01e8c6bb-056e-44f5-95bb-641c87e2f36c">
+                <indexColumn Id="ceec70e0-e538-47cd-b76d-6b8e17b4d898" fieldID="2680d149-9494-4f20-a876-95753b400683" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+        <entityHasIndexes Id="949b1bec-3f7e-4f28-ab61-954dccce90a0">
+          <index Id="a0ca9de4-8d3d-445c-abe9-d95e4a5aaa9d" parentEntityID="82c6a2d7-716d-43e6-8370-1a95cfe6e486" indexType="IsIndexed">
+            <indexColumns>
+              <indexHasIndexColumns Id="9d6caa61-d8f3-47c1-b4b5-e8e4341a4398">
+                <indexColumn Id="24722daa-b688-4eef-97ce-01bb706d8a6b" fieldID="53d912d3-d058-43f8-892a-6294acd74ce4" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+        <entityHasIndexes Id="3a9a58a4-d33d-4806-b7be-ac992eda52a6">
+          <index Id="dd4366d9-ff75-493a-b95a-30cb8aeed58c" parentEntityID="82c6a2d7-716d-43e6-8370-1a95cfe6e486" indexType="IsIndexed">
+            <indexColumns>
+              <indexHasIndexColumns Id="d6b87732-4fef-4422-b82e-b695bd25e21f">
+                <indexColumn Id="fefff83c-15ea-47d6-b863-9b67b81d9daf" fieldID="d09215ea-40b2-4e31-b968-8f1898bec7bc" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+        <entityHasIndexes Id="05620931-9c40-47a9-836e-b3e2b629bb92">
+          <index Id="3d3f49e7-46c1-4b0a-9522-2eb85661f50f" parentEntityID="82c6a2d7-716d-43e6-8370-1a95cfe6e486" indexType="IsIndexed">
+            <indexColumns>
+              <indexHasIndexColumns Id="1656b183-2148-40da-a62d-b783e13eaadd">
+                <indexColumn Id="aee01415-ea8f-4ff5-a66c-f02d6011d79c" fieldID="10527e9b-46b6-4f2f-b301-394fe9c4cc20" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+        <entityHasIndexes Id="dfab7699-653e-4894-acf1-54929e6126da">
+          <index Id="383ac13f-51d5-4286-ad02-eb8cd959b744" parentEntityID="82c6a2d7-716d-43e6-8370-1a95cfe6e486" indexType="IsIndexed">
+            <indexColumns>
+              <indexHasIndexColumns Id="3c429c4d-d696-48cc-82fb-2a3d1b198396">
+                <indexColumn Id="50a62164-c3be-495e-bb77-a28514802da9" fieldID="29e82b87-ca95-4881-aa1f-160144d6fe7f" sortOrder="1" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+      </indexes>
+    </entity>
+    <entity Id="6e7b17aa-6c16-4dee-a779-259ad212b0de" name="State" copyStateInfo="">
+      <fields>
+        <entityHasFields Id="4f340dc0-9457-46fd-9c14-dfa717ee639a">
+          <field Id="2d113c7f-1db7-4728-a5ce-e1ba0ca878a2" name="Abbr" nullable="false" isIndexed="true" length="2" min="NaN" max="NaN" scale="0" sortOrder="1" />
+        </entityHasFields>
+        <entityHasFields Id="0368728a-c2ac-4070-9cbd-a1c10b78a6d0">
+          <field Id="6eebc5a4-9dc6-4e86-8224-e859994bf4e8" name="Description" length="1000" min="NaN" max="NaN" scale="0" sortOrder="2" />
+        </entityHasFields>
+        <entityHasFields Id="b8e83118-4b10-4d96-8844-80a0b0675fae">
+          <field Id="c5e385e3-6d94-4909-8ab5-83ca667ef383" name="Name" nullable="false" isIndexed="true" length="128" min="NaN" max="NaN" scale="0" sortOrder="3" />
+        </entityHasFields>
+        <entityHasFields Id="bfbd0117-6b9b-41e9-b2ec-b9ef5b261986">
+          <field Id="1e7c5a0e-bba8-4b9c-8676-8341e3588ab9" name="StateId" nullable="false" dataType="Int" identity="Database" isIndexed="true" isUnique="true" length="4" min="NaN" max="NaN" isPrimaryKey="true" scale="0" sortOrder="4" />
+        </entityHasFields>
+      </fields>
+      <indexes>
+        <entityHasIndexes Id="1bb65812-5668-4a57-94b2-cbb45e053568">
+          <index Id="09cb07fe-204a-4ce4-8e57-522b515b63cb" parentEntityID="6e7b17aa-6c16-4dee-a779-259ad212b0de" isUnique="true" indexType="PrimaryKey" clustered="true">
+            <indexColumns>
+              <indexHasIndexColumns Id="418583e2-5409-49cf-8b68-22cf6dcc293f">
+                <indexColumn Id="b74fa12b-166e-4bce-8a26-dd1bdbb010d8" fieldID="1e7c5a0e-bba8-4b9c-8676-8341e3588ab9" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+        <entityHasIndexes Id="cac0fb31-84ab-41f9-9b15-ed7341432938">
+          <index Id="afedfecc-bcbd-47bf-b7fe-077aa1af9d99" parentEntityID="6e7b17aa-6c16-4dee-a779-259ad212b0de" indexType="IsIndexed">
+            <indexColumns>
+              <indexHasIndexColumns Id="cbe59600-a3dd-4e60-8bbc-8081a87a4bf1">
+                <indexColumn Id="87bee068-69fb-47a1-bcbb-a93ad483b8ee" fieldID="2d113c7f-1db7-4728-a5ce-e1ba0ca878a2" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+        <entityHasIndexes Id="f70ef588-08cf-4cdd-89cb-424b15b094be">
+          <index Id="bfed4d3d-c966-4a56-b73b-b01b51b195d9" parentEntityID="6e7b17aa-6c16-4dee-a779-259ad212b0de" indexType="IsIndexed">
+            <indexColumns>
+              <indexHasIndexColumns Id="288bcf63-7665-4e2f-836b-1f5d46b09037">
+                <indexColumn Id="cf2a0bce-65b4-4654-aab3-d4b44cbd5f70" fieldID="c5e385e3-6d94-4909-8ab5-83ca667ef383" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+      </indexes>
+    </entity>
+  </entities>
+</nHydrateModel>
