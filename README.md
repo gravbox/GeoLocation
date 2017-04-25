@@ -11,3 +11,6 @@ When prompted, simply fill in the database connection information on the "Create
 
 #### Setup web service
 Create a web site in IIS and point to the binaries for the **Gravitybox.Webservice.GeoLocationService** project and give the site a port binding like 8080. Change the connection string in the web.config file and the service is ready to go. In this example you would then connect to web service at "http://localhost:8080/GeoLocationService.svc"
+
+#### Use the Service
+The service has several methods that allow you to get a ZipInfo object by ZIP code, coordinate, or city/state. The generic **GetLookup** method will figure out what was sent in and do its best to return the best answer.
