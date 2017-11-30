@@ -150,21 +150,23 @@ namespace Gravitybox.LocationService.Install
             connectString = sb.ToString();
 
             var valid = false;
-            var conn = new System.Data.SqlClient.SqlConnection();
-            try
+            using (var conn = new System.Data.SqlClient.SqlConnection())
             {
-                conn.ConnectionString = connectString;
-                conn.Open();
-                valid = true;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-                valid = false;
-            }
-            finally
-            {
-                conn.Close();
+                try
+                {
+                    conn.ConnectionString = connectString;
+                    conn.Open();
+                    valid = true;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+                    valid = false;
+                }
+                finally
+                {
+                    conn.Close();
+                }
             }
             return valid;
         }
@@ -209,46 +211,100 @@ namespace Gravitybox.LocationService.Install
         internal static string[] GetDatabaseNames(string connectString)
         {
             var databaseNames = new ArrayList();
-            var conn = new System.Data.SqlClient.SqlConnection();
-            SqlDataReader databaseReader = null;
-            SqlDataReader existsReader = null;
+            using (var conn = new System.Data.SqlClient.SqlConnection())
+            {
+                SqlDataReader databaseReader = null;
+                SqlDataReader existsReader = null;
 
-            try
-            {
-                conn.ConnectionString = connectString;
-                conn.Open();
-
-                var cmdDatabases = new SqlCommand();
-                cmdDatabases.CommandText = "use [master] select name from sysdatabases";
-                cmdDatabases.CommandType = System.Data.CommandType.Text;
-                cmdDatabases.Connection = conn;
-                databaseReader = cmdDatabases.ExecuteReader();
-                while (databaseReader.Read())
-                {
-                    databaseNames.Add(databaseReader["name"]);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-                databaseNames.Clear();
-            }
-            finally
-            {
-                if (databaseReader != null)
-                    databaseReader.Close();
-                if (conn != null)
-                    conn.Close();
-            }
-
-            var itemsToRemove = new ArrayList();
-            foreach (string dbName in databaseNames)
-            {
                 try
                 {
+                    conn.ConnectionString = connectString;
+                    conn.Open();
+
+                    var cmdDatabases = new SqlCommand();
+                    cmdDatabases.CommandText = "use [master] select name from sysdatabases";
+                    cmdDatabases.CommandType = System.Data.CommandType.Text;
+                    cmdDatabases.Connection = conn;
+                    databaseReader = cmdDatabases.ExecuteReader();
+                    while (databaseReader.Read())
+                    {
+                        databaseNames.Add(databaseReader["name"]);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+                    databaseNames.Clear();
+                }
+                finally
+                {
+                    if (databaseReader != null)
+                        databaseReader.Close();
+                    if (conn != null)
+                        conn.Close();
+                }
+
+                var itemsToRemove = new ArrayList();
+                foreach (string dbName in databaseNames)
+                {
+                    try
+                    {
+                        conn.Open();
+                        var cmdUserExist = new SqlCommand();
+                        cmdUserExist.CommandText = "use [" + dbName + "] select case when Permissions()&254=254 then 1 else 0 end as hasAccess";
+                        cmdUserExist.CommandType = System.Data.CommandType.Text;
+                        cmdUserExist.Connection = conn;
+                        existsReader = cmdUserExist.ExecuteReader();
+                        if (existsReader.Read())
+                        {
+                            try
+                            {
+                                if (int.Parse(existsReader["hasAccess"].ToString()) == 0)
+                                {
+                                    itemsToRemove.Add(dbName);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.ToString());
+                        itemsToRemove.Add(dbName);
+                    }
+                    finally
+                    {
+                        if (existsReader != null)
+                            existsReader.Close();
+                        if (conn != null)
+                            conn.Close();
+                    }
+                }
+
+                foreach (string removedItem in itemsToRemove)
+                {
+                    databaseNames.Remove(removedItem);
+                }
+            }
+
+            return (string[])databaseNames.ToArray(typeof(string));
+        }
+
+        internal static bool HasCreatePermissions(string connectString)
+        {
+            var returnVal = false;
+            using (var conn = new System.Data.SqlClient.SqlConnection())
+            {
+                SqlDataReader existsReader = null;
+                try
+                {
+                    conn.ConnectionString = connectString;
                     conn.Open();
                     var cmdUserExist = new SqlCommand();
-                    cmdUserExist.CommandText = "use [" + dbName + "] select case when Permissions()&254=254 then 1 else 0 end as hasAccess";
+                    cmdUserExist.CommandText = "use [master] select case when Permissions()&1=1 then 1 else 0 end as hasAccess";
                     cmdUserExist.CommandType = System.Data.CommandType.Text;
                     cmdUserExist.Connection = conn;
                     existsReader = cmdUserExist.ExecuteReader();
@@ -256,9 +312,9 @@ namespace Gravitybox.LocationService.Install
                     {
                         try
                         {
-                            if (int.Parse(existsReader["hasAccess"].ToString()) == 0)
+                            if (int.Parse(existsReader["hasAccess"].ToString()) == 1)
                             {
-                                itemsToRemove.Add(dbName);
+                                returnVal = true;
                             }
                         }
                         catch (Exception ex)
@@ -270,63 +326,12 @@ namespace Gravitybox.LocationService.Install
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine(ex.ToString());
-                    itemsToRemove.Add(dbName);
                 }
                 finally
                 {
                     if (existsReader != null)
                         existsReader.Close();
-                    if (conn != null)
-                        conn.Close();
                 }
-            }
-            foreach (string removedItem in itemsToRemove)
-            {
-                databaseNames.Remove(removedItem);
-            }
-
-            return (string[])databaseNames.ToArray(typeof(string));
-        }
-
-        internal static bool HasCreatePermissions(string connectString)
-        {
-            var returnVal = false;
-            var conn = new System.Data.SqlClient.SqlConnection();
-            SqlDataReader existsReader = null;
-            try
-            {
-                conn.ConnectionString = connectString;
-                conn.Open();
-                var cmdUserExist = new SqlCommand();
-                cmdUserExist.CommandText = "use [master] select case when Permissions()&1=1 then 1 else 0 end as hasAccess";
-                cmdUserExist.CommandType = System.Data.CommandType.Text;
-                cmdUserExist.Connection = conn;
-                existsReader = cmdUserExist.ExecuteReader();
-                if (existsReader.Read())
-                {
-                    try
-                    {
-                        if (int.Parse(existsReader["hasAccess"].ToString()) == 1)
-                        {
-                            returnVal = true;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine(ex.ToString());
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-            }
-            finally
-            {
-                if (existsReader != null)
-                    existsReader.Close();
-                if (conn != null)
-                    conn.Close();
             }
             return returnVal;
         }
@@ -335,36 +340,36 @@ namespace Gravitybox.LocationService.Install
         #region create database
         internal static void CreateDatabase(InstallSetup setup)
         {
-            var conn = new System.Data.SqlClient.SqlConnection();
             try
             {
-                conn.ConnectionString = setup.MasterConnectionString;
-                conn.Open();
-                var cmdCreateDb = new SqlCommand();
-                var collate = string.Empty;
-                if (!string.IsNullOrEmpty(collate)) collate = " COLLATE " + collate;
-                var fileInfo = string.Empty;
-                if (!string.IsNullOrEmpty(setup.DiskPath))
-                    fileInfo = " ON (NAME='" + setup.NewDatabaseName + "', FILENAME= '" + Path.Combine(setup.DiskPath, setup.NewDatabaseName) + ".mdf')";
-                cmdCreateDb.CommandText = "CREATE DATABASE [" + setup.NewDatabaseName + "]" + collate + fileInfo;
-                cmdCreateDb.CommandType = System.Data.CommandType.Text;
-                cmdCreateDb.Connection = conn;
-                SqlServers.ExecuteCommand(cmdCreateDb);
+                using (var conn = new System.Data.SqlClient.SqlConnection())
+                {
+                    conn.ConnectionString = setup.MasterConnectionString;
+                    conn.Open();
+                    var cmdCreateDb = new SqlCommand();
+                    var collate = string.Empty;
+                    if (!string.IsNullOrEmpty(collate)) collate = " COLLATE " + collate;
+                    var fileInfo = string.Empty;
+                    if (!string.IsNullOrEmpty(setup.DiskPath))
+                        fileInfo = " ON (NAME='" + setup.NewDatabaseName + "', FILENAME= '" + Path.Combine(setup.DiskPath, setup.NewDatabaseName) + ".mdf')";
+                    cmdCreateDb.CommandText = "CREATE DATABASE [" + setup.NewDatabaseName + "]" + collate + fileInfo;
+                    cmdCreateDb.CommandType = System.Data.CommandType.Text;
+                    cmdCreateDb.Connection = conn;
+                    SqlServers.ExecuteCommand(cmdCreateDb);
 
-                var sb = new StringBuilder();
-                sb.AppendLine("declare @databasename nvarchar(500)");
-                sb.AppendLine("set @databasename = (select [name] from master.sys.master_files where database_id = (select top 1 [dbid] from master.sys.sysdatabases where name = '" + setup.NewDatabaseName + "' and [type] = 0))");
-                sb.AppendLine("exec('ALTER DATABASE [" + setup.NewDatabaseName + "] MODIFY FILE (NAME = [' + @databasename + '],  MAXSIZE = UNLIMITED, FILEGROWTH = 10MB)')");
-                sb.AppendLine("set @databasename = (select [name] from master.sys.master_files where database_id = (select top 1 [dbid] from master.sys.sysdatabases where name = '" + setup.NewDatabaseName + "' and [type] = 1))");
-                sb.AppendLine("exec('ALTER DATABASE [" + setup.NewDatabaseName + "] MODIFY FILE (NAME = [' + @databasename + '],  MAXSIZE = UNLIMITED, FILEGROWTH = 10MB)')");
-                cmdCreateDb.CommandText = sb.ToString();
-                SqlServers.ExecuteCommand(cmdCreateDb);
+                    var sb = new StringBuilder();
+                    sb.AppendLine("declare @databasename nvarchar(500)");
+                    sb.AppendLine("set @databasename = (select [name] from master.sys.master_files where database_id = (select top 1 [dbid] from master.sys.sysdatabases where name = '" + setup.NewDatabaseName + "' and [type] = 0))");
+                    sb.AppendLine("exec('ALTER DATABASE [" + setup.NewDatabaseName + "] MODIFY FILE (NAME = [' + @databasename + '],  MAXSIZE = UNLIMITED, FILEGROWTH = 10MB)')");
+                    sb.AppendLine("set @databasename = (select [name] from master.sys.master_files where database_id = (select top 1 [dbid] from master.sys.sysdatabases where name = '" + setup.NewDatabaseName + "' and [type] = 1))");
+                    sb.AppendLine("exec('ALTER DATABASE [" + setup.NewDatabaseName + "] MODIFY FILE (NAME = [' + @databasename + '],  MAXSIZE = UNLIMITED, FILEGROWTH = 10MB)')");
+                    cmdCreateDb.CommandText = sb.ToString();
+                    SqlServers.ExecuteCommand(cmdCreateDb);
+                }
             }
             catch { throw; }
             finally
             {
-                if (conn != null)
-                    conn.Close();
                 System.Threading.Thread.Sleep(1000);
             }
         }
@@ -375,32 +380,26 @@ namespace Gravitybox.LocationService.Install
         internal static ArrayList GetTableNamesAsArrayList(string connectString)
         {
             ArrayList databaseTables = new ArrayList();
-            SqlDataReader tableReader = null;
-            var conn = new System.Data.SqlClient.SqlConnection();
             try
             {
-                conn.ConnectionString = connectString;
-                conn.Open();
-                SqlCommand cmdCreateDb = new SqlCommand();
-                cmdCreateDb.CommandText = "select name from sysobjects where xtype = 'U' and name <> 'dtproperties'";
-                cmdCreateDb.CommandType = System.Data.CommandType.Text;
-                cmdCreateDb.Connection = conn;
-                tableReader = cmdCreateDb.ExecuteReader();
-                while (tableReader.Read())
+                using (var conn = new System.Data.SqlClient.SqlConnection())
                 {
-                    databaseTables.Add(tableReader.GetString(0));
+                    conn.ConnectionString = connectString;
+                    conn.Open();
+                    SqlCommand cmdCreateDb = new SqlCommand();
+                    cmdCreateDb.CommandText = "select name from sysobjects where xtype = 'U' and name <> 'dtproperties'";
+                    cmdCreateDb.CommandType = System.Data.CommandType.Text;
+                    cmdCreateDb.Connection = conn;
+                    var tableReader = cmdCreateDb.ExecuteReader();
+                    while (tableReader.Read())
+                    {
+                        databaseTables.Add(tableReader.GetString(0));
+                    }
                 }
             }
             catch (Exception ex)
             {
                 throw;
-            }
-            finally
-            {
-                if (tableReader != null)
-                    tableReader.Close();
-                if (conn != null)
-                    conn.Close();
             }
             return databaseTables;
         }
@@ -409,30 +408,28 @@ namespace Gravitybox.LocationService.Install
         #region database column operations
         internal static DataSet GetTableColumns(string connectString, string tableName)
         {
-            var conn = new SqlConnection();
-            var cmd = new SqlCommand();
-            DataSet tableColumns = new DataSet();
-            SqlDataAdapter da = new SqlDataAdapter();
-
             try
             {
-                conn.ConnectionString = connectString;
-                cmd.CommandText = GetSqlColumnsForTable(tableName);
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.Connection = conn;
-                da.SelectCommand = cmd;
-                da.Fill(tableColumns);
+                using (var conn = new System.Data.SqlClient.SqlConnection())
+                {
+                    conn.ConnectionString = connectString;
+                    var cmd = new SqlCommand();
+                    cmd.CommandText = GetSqlColumnsForTable(tableName);
+                    cmd.CommandType = System.Data.CommandType.Text;
+                    cmd.Connection = conn;
+
+                    SqlDataAdapter da = new SqlDataAdapter();
+                    da.SelectCommand = cmd;
+
+                    var tableColumns = new DataSet();
+                    da.Fill(tableColumns);
+                    return tableColumns;
+                }
             }
             catch (Exception ex)
             {
                 throw;
             }
-            finally
-            {
-                if (conn != null)
-                    conn.Close();
-            }
-            return tableColumns;
         }
 
         public static bool HasLength(System.Data.SqlDbType dataType)
@@ -476,7 +473,6 @@ namespace Gravitybox.LocationService.Install
         #region extended property helpers
         internal static void UpdateDatabaseMetaProperty(string connectionString, string propertyName, string propertyValue)
         {
-            var conn = new System.Data.SqlClient.SqlConnection();
             try
             {
                 var settings = new nHydrateSetting();
@@ -503,11 +499,6 @@ namespace Gravitybox.LocationService.Install
             catch (Exception ex)
             {
                 throw;
-            }
-            finally
-            {
-                if (conn != null)
-                    conn.Close();
             }
 
             //We no longer use extended properties
@@ -563,26 +554,23 @@ namespace Gravitybox.LocationService.Install
         {
             if (extendedPropertyEnabled == null)
             {
-                var conn = new System.Data.SqlClient.SqlConnection();
                 try
                 {
-                    conn.ConnectionString = connectionString;
-                    conn.Open();
-                    SqlCommand cmdGetExtProp = new SqlCommand();
-                    cmdGetExtProp.CommandText = "SELECT value FROM ::fn_listextendedproperty('', '', '', '', '', '', '')";
-                    cmdGetExtProp.CommandType = System.Data.CommandType.Text;
-                    cmdGetExtProp.Connection = conn;
-                    SqlServers.ExecuteCommand(cmdGetExtProp);
-                    extendedPropertyEnabled = true;
+                    using (var conn = new System.Data.SqlClient.SqlConnection())
+                    {
+                        conn.ConnectionString = connectionString;
+                        conn.Open();
+                        SqlCommand cmdGetExtProp = new SqlCommand();
+                        cmdGetExtProp.CommandText = "SELECT value FROM ::fn_listextendedproperty('', '', '', '', '', '', '')";
+                        cmdGetExtProp.CommandType = System.Data.CommandType.Text;
+                        cmdGetExtProp.Connection = conn;
+                        SqlServers.ExecuteCommand(cmdGetExtProp);
+                        extendedPropertyEnabled = true;
+                    }
                 }
                 catch (Exception ex)
                 {
                     extendedPropertyEnabled = false;
-                }
-                finally
-                {
-                    if (conn != null)
-                        conn.Close();
                 }
             }
             return extendedPropertyEnabled.Value;
@@ -593,25 +581,22 @@ namespace Gravitybox.LocationService.Install
             //If the database supports extended properties then use them no matter what
             if (CanUseExtendedProperty(connectionString) && ExtendedPropertyExists(connectionString, propertyName, string.Empty, string.Empty, string.Empty))
             {
-                var conn = new System.Data.SqlClient.SqlConnection();
                 try
                 {
-                    conn.ConnectionString = connectionString;
-                    conn.Open();
-                    SqlCommand cmdGetExtProp = new SqlCommand();
-                    cmdGetExtProp.CommandText = String.Format("EXEC sp_dropextendedproperty '{0}'", new object[] { propertyName });
-                    cmdGetExtProp.CommandType = System.Data.CommandType.Text;
-                    cmdGetExtProp.Connection = conn;
-                    SqlServers.ExecuteCommand(cmdGetExtProp);
+                    using (var conn = new System.Data.SqlClient.SqlConnection())
+                    {
+                        conn.ConnectionString = connectionString;
+                        conn.Open();
+                        SqlCommand cmdGetExtProp = new SqlCommand();
+                        cmdGetExtProp.CommandText = String.Format("EXEC sp_dropextendedproperty '{0}'", new object[] { propertyName });
+                        cmdGetExtProp.CommandType = System.Data.CommandType.Text;
+                        cmdGetExtProp.Connection = conn;
+                        SqlServers.ExecuteCommand(cmdGetExtProp);
+                    }
                 }
                 catch (Exception ex)
                 {
                     throw;
-                }
-                finally
-                {
-                    if (conn != null)
-                        conn.Close();
                 }
             }
         }
@@ -661,25 +646,22 @@ namespace Gravitybox.LocationService.Install
                     columnValue = "'" + column + "'";
                 }
 
-                var conn = new System.Data.SqlClient.SqlConnection();
                 try
                 {
-                    conn.ConnectionString = connectionString;
-                    conn.Open();
-                    SqlCommand cmdGetExtProp = new SqlCommand();
-                    cmdGetExtProp.CommandText = String.Format("EXEC sp_updateextendedproperty {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}", new object[] { property, propertyValue, userName, userValue, tableName, tableValue, columnName, columnValue });
-                    cmdGetExtProp.CommandType = System.Data.CommandType.Text;
-                    cmdGetExtProp.Connection = conn;
-                    SqlServers.ExecuteCommand(cmdGetExtProp);
+                    using (var conn = new System.Data.SqlClient.SqlConnection())
+                    {
+                        conn.ConnectionString = connectionString;
+                        conn.Open();
+                        SqlCommand cmdGetExtProp = new SqlCommand();
+                        cmdGetExtProp.CommandText = String.Format("EXEC sp_updateextendedproperty {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}", new object[] { property, propertyValue, userName, userValue, tableName, tableValue, columnName, columnValue });
+                        cmdGetExtProp.CommandType = System.Data.CommandType.Text;
+                        cmdGetExtProp.Connection = conn;
+                        SqlServers.ExecuteCommand(cmdGetExtProp);
+                    }
                 }
                 catch (Exception ex)
                 {
                     throw;
-                }
-                finally
-                {
-                    if (conn != null)
-                        conn.Close();
                 }
             }
         }
@@ -729,25 +711,22 @@ namespace Gravitybox.LocationService.Install
                     columnValue = "'" + column + "'";
                 }
 
-                var conn = new System.Data.SqlClient.SqlConnection();
                 try
                 {
-                    conn.ConnectionString = connectionString;
-                    conn.Open();
-                    SqlCommand cmdGetExtProp = new SqlCommand();
-                    cmdGetExtProp.CommandText = String.Format("EXEC sp_addextendedproperty {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}", new object[] { property, propertyValue, userName, userValue, tableName, tableValue, columnName, columnValue });
-                    cmdGetExtProp.CommandType = System.Data.CommandType.Text;
-                    cmdGetExtProp.Connection = conn;
-                    SqlServers.ExecuteCommand(cmdGetExtProp);
+                    using (var conn = new System.Data.SqlClient.SqlConnection())
+                    {
+                        conn.ConnectionString = connectionString;
+                        conn.Open();
+                        SqlCommand cmdGetExtProp = new SqlCommand();
+                        cmdGetExtProp.CommandText = String.Format("EXEC sp_addextendedproperty {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}", new object[] { property, propertyValue, userName, userValue, tableName, tableValue, columnName, columnValue });
+                        cmdGetExtProp.CommandType = System.Data.CommandType.Text;
+                        cmdGetExtProp.Connection = conn;
+                        SqlServers.ExecuteCommand(cmdGetExtProp);
+                    }
                 }
                 catch (Exception ex)
                 {
                     throw;
-                }
-                finally
-                {
-                    if (conn != null)
-                        conn.Close();
                 }
             }
 
@@ -796,35 +775,33 @@ namespace Gravitybox.LocationService.Install
                 columnValue = "'" + column + "'";
             }
 
-            var conn = new System.Data.SqlClient.SqlConnection();
-            System.Data.SqlClient.SqlDataReader externalReader = null;
             try
             {
-                conn.ConnectionString = connectionString;
-                conn.Open();
-                SqlCommand cmdGetExtProp = new SqlCommand();
-                cmdGetExtProp.CommandText = String.Format("SELECT value FROM ::fn_listextendedproperty({0}, {1}, {2}, {3}, {4}, {5}, {6})", new object[] { property, userName, userValue, tableName, tableValue, columnName, columnValue });
-                cmdGetExtProp.CommandType = System.Data.CommandType.Text;
-                cmdGetExtProp.Connection = conn;
-                externalReader = cmdGetExtProp.ExecuteReader();
-                if (externalReader.Read())
+                using (var conn = new System.Data.SqlClient.SqlConnection())
                 {
-                    if (externalReader[0] != System.DBNull.Value)
+                    conn.ConnectionString = connectionString;
+                    conn.Open();
+                    using (var cmdGetExtProp = new SqlCommand())
                     {
-                        returnVal = externalReader.GetString(0);
+                        cmdGetExtProp.CommandText = String.Format("SELECT value FROM ::fn_listextendedproperty({0}, {1}, {2}, {3}, {4}, {5}, {6})", new object[] { property, userName, userValue, tableName, tableValue, columnName, columnValue });
+                        cmdGetExtProp.CommandType = System.Data.CommandType.Text;
+                        cmdGetExtProp.Connection = conn;
+                        using (var externalReader = cmdGetExtProp.ExecuteReader())
+                        {
+                            if (externalReader.Read())
+                            {
+                                if (externalReader[0] != System.DBNull.Value)
+                                {
+                                    returnVal = externalReader.GetString(0);
+                                }
+                            }
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
                 throw;
-            }
-            finally
-            {
-                if (externalReader != null)
-                    externalReader.Close();
-                if (conn != null)
-                    conn.Close();
             }
             return returnVal;
         }
@@ -873,32 +850,30 @@ namespace Gravitybox.LocationService.Install
                     columnValue = "'" + column + "'";
                 }
 
-                var conn = new System.Data.SqlClient.SqlConnection();
-                System.Data.SqlClient.SqlDataReader externalReader = null;
                 try
                 {
-                    conn.ConnectionString = connectionString;
-                    conn.Open();
-                    SqlCommand command = new SqlCommand();
-                    command.CommandText = String.Format("SELECT value FROM ::fn_listextendedproperty({0}, {1}, {2}, {3}, {4}, {5}, {6})", new object[] { property, userName, userValue, tableName, tableValue, columnName, columnValue });
-                    command.CommandType = System.Data.CommandType.Text;
-                    command.Connection = conn;
-                    externalReader = command.ExecuteReader();
-                    if (externalReader.Read())
+                    using (var conn = new System.Data.SqlClient.SqlConnection())
                     {
-                        retval = true;
+                        conn.ConnectionString = connectionString;
+                        conn.Open();
+                        using (var command = new SqlCommand())
+                        {
+                            command.CommandText = String.Format("SELECT value FROM ::fn_listextendedproperty({0}, {1}, {2}, {3}, {4}, {5}, {6})", new object[] { property, userName, userValue, tableName, tableValue, columnName, columnValue });
+                            command.CommandType = System.Data.CommandType.Text;
+                            command.Connection = conn;
+                            using (var externalReader = command.ExecuteReader())
+                            {
+                                if (externalReader.Read())
+                                {
+                                    retval = true;
+                                }
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     throw;
-                }
-                finally
-                {
-                    if (externalReader != null)
-                        externalReader.Close();
-                    if (conn != null)
-                        conn.Close();
                 }
             }
             return retval;
@@ -934,7 +909,7 @@ namespace Gravitybox.LocationService.Install
             var timer = Stopwatch.StartNew();
             var tempFolder = string.Empty;
             var scripts = ReadSQLFileSectionsFromResource(resourceFileName, setup);
-            System.Diagnostics.Debug.WriteLine(TheDate + " Start File=" + Extensions.StripResourceAssem(resourceFileName));
+            System.Diagnostics.Trace.WriteLine(TheDate + " Start File=" + Extensions.StripResourceAssem(resourceFileName));
 
             #region Load script hashes
             var runScript = !setup.UseHash;
@@ -976,7 +951,7 @@ namespace Gravitybox.LocationService.Install
             }
 
             timer.Start();
-            System.Diagnostics.Debug.WriteLine(TheDate + " End File=" + Extensions.StripResourceAssem(resourceFileName) + ", Elapsed=" + timer.FormattedTime());
+            System.Diagnostics.Trace.WriteLine(TheDate + " End File=" + Extensions.StripResourceAssem(resourceFileName) + ", Elapsed=" + timer.FormattedTime());
         }
 
         internal static void ExecuteSQL(SqlConnection connection, SqlTransaction transaction, string sql, InstallSetup setup)
@@ -1067,7 +1042,7 @@ namespace Gravitybox.LocationService.Install
                         debugText += sql.Substring(0, sqlLength);
                         if (sqlLength == MAX_SQL) debugText += "...";
                         debugText += "\r\n\r\n";
-                        System.Diagnostics.Debug.WriteLine(debugText);
+                        System.Diagnostics.Trace.WriteLine(debugText);
                     }
 
                     _timer.Restart();
@@ -1138,7 +1113,7 @@ namespace Gravitybox.LocationService.Install
                 if (methodType == null)
                     throw new Exception("Method: '" + methodName + "' not implemented");
 
-                System.Diagnostics.Debug.WriteLine(TheDate + " Start CallMethod=" + methodName);
+                System.Diagnostics.Trace.WriteLine(TheDate + " Start CallMethod=" + methodName);
                 if (methodType.GetParameters().Count() == 2)
                 {
                     methodType.Invoke(null, new object[] { connection, transaction });
@@ -1153,7 +1128,7 @@ namespace Gravitybox.LocationService.Install
                 }
 
                 timer.Stop();
-                System.Diagnostics.Debug.WriteLine(TheDate + " End CallMethod=" + methodName + ", Elapsed=" + timer.FormattedTime());
+                System.Diagnostics.Trace.WriteLine(TheDate + " End CallMethod=" + methodName + ", Elapsed=" + timer.FormattedTime());
             }
             catch (Exception ex)
             {
@@ -1561,32 +1536,34 @@ namespace Gravitybox.LocationService.Install
 
         public void Load(string connectionString)
         {
-            var conn = new System.Data.SqlClient.SqlConnection();
             try
             {
-                conn.ConnectionString = connectionString;
-                conn.Open();
-
-                var da = new SqlDataAdapter("select * from sys.tables where name = '__nhydrateschema'", conn);
-                var ds = new DataSet();
-                da.Fill(ds);
-                if (ds.Tables[0].Rows.Count > 0)
+                using (var conn = new System.Data.SqlClient.SqlConnection())
                 {
-                    da = new SqlDataAdapter("SELECT * FROM __nhydrateschema where [ModelKey] = '" + UpgradeInstaller.MODELKEY + "'", conn);
-                    ds = new DataSet();
-                    da.Fill(ds);
-                    var t = ds.Tables[0];
-                    if (t.Rows.Count > 0)
-                    {
-                        this.dbVersion = (string)t.Rows[0]["dbVersion"];
-                        this.LastUpdate = (DateTime)t.Rows[0]["LastUpdate"];
-                        this.ModelKey = (Guid)t.Rows[0]["ModelKey"];
-                        this.LoadHistory((string)t.Rows[0]["History"]);
-                        this.IsLoaded = true;
-                    }
+                    conn.ConnectionString = connectionString;
+                    conn.Open();
 
-                    //There is an nHydrate table so empty or not we are finished
-                    return;
+                    var da = new SqlDataAdapter("select * from sys.tables where name = '__nhydrateschema'", conn);
+                    var ds = new DataSet();
+                    da.Fill(ds);
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        da = new SqlDataAdapter("SELECT * FROM __nhydrateschema where [ModelKey] = '" + UpgradeInstaller.MODELKEY + "'", conn);
+                        ds = new DataSet();
+                        da.Fill(ds);
+                        var t = ds.Tables[0];
+                        if (t.Rows.Count > 0)
+                        {
+                            this.dbVersion = (string)t.Rows[0]["dbVersion"];
+                            this.LastUpdate = (DateTime)t.Rows[0]["LastUpdate"];
+                            this.ModelKey = (Guid)t.Rows[0]["ModelKey"];
+                            this.LoadHistory((string)t.Rows[0]["History"]);
+                            this.IsLoaded = true;
+                        }
+
+                        //There is an nHydrate table so empty or not we are finished
+                        return;
+                    }
                 }
 
                 try
@@ -1620,11 +1597,6 @@ namespace Gravitybox.LocationService.Install
             {
                 throw;
             }
-            finally
-            {
-                if (conn != null)
-                    conn.Close();
-            }
         }
 
         public string GetVersionUpdateScript()
@@ -1655,26 +1627,22 @@ namespace Gravitybox.LocationService.Install
 
         public bool Save(string connectionString)
         {
-            var conn = new System.Data.SqlClient.SqlConnection();
             try
             {
-                conn.ConnectionString = connectionString;
-                conn.Open();
-                var command = new SqlCommand(GetVersionUpdateScript(), conn);
-                SqlServers.ExecuteCommand(command);
-                return true;
+                using (var conn = new System.Data.SqlClient.SqlConnection())
+                {
+                    conn.ConnectionString = connectionString;
+                    conn.Open();
+                    var command = new SqlCommand(GetVersionUpdateScript(), conn);
+                    SqlServers.ExecuteCommand(command);
+                    return true;
+                }
             }
             catch (Exception ex)
             {
                 return false;
                 throw;
             }
-            finally
-            {
-                if (conn != null)
-                    conn.Close();
-            }
-
         }
 
         public string dbVersion { get; set; }
@@ -1842,7 +1810,10 @@ namespace Gravitybox.LocationService.Install
             finally
             {
                 if (transaction == null && conn != null)
+                {
                     conn.Close();
+                    conn.Dispose();
+                }
             }
             return retval;
         }
@@ -1930,7 +1901,10 @@ namespace Gravitybox.LocationService.Install
             finally
             {
                 if (transaction == null && conn != null)
+                {
                     conn.Close();
+                    conn.Dispose();
+                }
             }
         }
 

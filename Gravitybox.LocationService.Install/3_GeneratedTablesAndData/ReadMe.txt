@@ -1,1 +1,1 @@
-Do not modify scripts in this folder.
+Do not modify the generated scripts in this folder.

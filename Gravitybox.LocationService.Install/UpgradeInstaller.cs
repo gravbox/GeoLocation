@@ -33,7 +33,7 @@ namespace Gravitybox.LocationService.Install
         internal const string DEFAULT_NAMESPACE = "Gravitybox.LocationService.Install";
         internal const string MODELKEY = "792c16d4-9353-4f34-bf2b-4c66aa688643";
         private GeneratedVersion _previousVersion = null;
-        private static GeneratedVersion _upgradeToVersion = new GeneratedVersion(0, 0, 0, 3, 9);
+        private static GeneratedVersion _upgradeToVersion = new GeneratedVersion(0, 0, 0, 3, 10);
         private InstallSetup _setup = null;
         private System.Data.SqlClient.SqlConnection _connection;
         private System.Data.SqlClient.SqlTransaction _transaction;
@@ -574,6 +574,8 @@ namespace Gravitybox.LocationService.Install
             finally
             {
                 _connection.Close();
+                _connection.Dispose();
+                if (_transaction != null) _transaction.Dispose();
             }
 
         }
@@ -729,69 +731,16 @@ namespace Gravitybox.LocationService.Install
         private void UpgradeFolder3(StringBuilder sb, InstallSetup setup)
         {
             const string MAIN_FOLDER = "._3_GeneratedTablesAndData.";
-            const string CREATE_SCHEMA_FILE = MAIN_FOLDER + "CreateSchema.sql";
-            const string TRIGGER_FILE = MAIN_FOLDER + "CreateSchemaAuditTriggers.sql";
-            const string STATIC_DATA_FILE = MAIN_FOLDER + "CreateData.sql";
-
-            //Do not run installation scripts if versions match
-            //if (_previousVersion.Equals(_upgradeToVersion))
-            //	return;
 
             if (setup.SkipNormalize) return;
 
+            var upgradeSchemaScripts = this.GetResourceNameUnderLocation(MAIN_FOLDER);
+            var sortByVersionScripts = new SortedDictionary<string, EmbeddedResourceName>(upgradeSchemaScripts);
+
             try
             {
-                //Run the create schema
-                var scripts = this.GetResourceNameUnderLocation(CREATE_SCHEMA_FILE);
-                foreach (EmbeddedResourceName ern in scripts.Values)
-                {
-                    var hashItem = _databaseItems.FirstOrDefault(x => x.name == ern.FullName);
-                    if (hashItem == null) _newItems.Add(ern.FullName);
-                    if (!setup.UseHash || (hashItem == null || hashItem.Hash != GetFileHash(ern.FullName, setup)))
-                    {
-                        setup.DebugScriptName = ern.FullName;
-                        if (sb == null) SqlServers.RunEmbeddedFile(_connection, _transaction, ern.FullName, null, _databaseItems, setup);
-                        else SqlServers.ReadSQLFileSectionsFromResource(ern.FullName, setup).ToList().ForEach(s => AppendCleanScript(ern.FullName, s, sb));
-                    }
-                }
-                setup.DebugScriptName = null;
-
-                //Run the static data
-                scripts = this.GetResourceNameUnderLocation(STATIC_DATA_FILE);
-                foreach (var ern in scripts.Values)
-                {
-                    var hashItem = _databaseItems.FirstOrDefault(x => x.name == ern.FullName);
-                    if (hashItem == null) _newItems.Add(ern.FullName);
-                    if (!setup.UseHash || (hashItem == null || hashItem.Hash != GetFileHash(ern.FullName, setup)))
-                    {
-                        setup.DebugScriptName = ern.FullName;
-                        if (sb == null) SqlServers.RunEmbeddedFile(_connection, _transaction, ern.FullName, null, _databaseItems, setup);
-                        else SqlServers.ReadSQLFileSectionsFromResource(ern.FullName, setup).ToList().ForEach(s => AppendCleanScript(ern.FullName, s, sb));
-                    }
-                }
-                setup.DebugScriptName = null;
-
-                //Other static data
-                scripts = this.GetResourceNameUnderLocation(MAIN_FOLDER);
-                this.GetResourceNameUnderLocation(CREATE_SCHEMA_FILE).ToList().ForEach(x => scripts.Remove(x.Key));
-                this.GetResourceNameUnderLocation(STATIC_DATA_FILE).ToList().ForEach(x => scripts.Remove(x.Key));
-                this.GetResourceNameUnderLocation(TRIGGER_FILE).ToList().ForEach(x => scripts.Remove(x.Key));
-                foreach (var ern in scripts.Values)
-                {
-                    var hashItem = _databaseItems.FirstOrDefault(x => x.name == ern.FullName);
-                    if (hashItem == null) _newItems.Add(ern.FullName);
-                    if (!setup.UseHash || (hashItem == null || hashItem.Hash != GetFileHash(ern.FullName, setup)))
-                    {
-                        setup.DebugScriptName = ern.FullName;
-                        if (sb == null) SqlServers.RunEmbeddedFile(_connection, _transaction, ern.FullName, null, _databaseItems, setup);
-                        else SqlServers.ReadSQLFileSectionsFromResource(ern.FullName, setup).ToList().ForEach(s => AppendCleanScript(ern.FullName, s, sb));
-                    }
-                }
-                setup.DebugScriptName = null;
-
-                //Run the triggers
-                scripts = this.GetResourceNameUnderLocation(TRIGGER_FILE);
-                foreach (var ern in scripts.Values)
+                //Run the create scripts
+                foreach (EmbeddedResourceName ern in sortByVersionScripts.Values)
                 {
                     var hashItem = _databaseItems.FirstOrDefault(x => x.name == ern.FullName);
                     if (hashItem == null) _newItems.Add(ern.FullName);
@@ -1565,7 +1514,7 @@ namespace Gravitybox.LocationService.Install
     #region Version Class
 
     /// <summary />
-    public class GeneratedVersion : IComparable<GeneratedVersion>
+    public partial class GeneratedVersion : IComparable<GeneratedVersion>
     {
         #region member variables
         private int _major = 0;
@@ -1573,6 +1522,7 @@ namespace Gravitybox.LocationService.Install
         private int _revision = 0;
         private int _build = 0;
         private int _generated = 0;
+        private List<int> _extra = new List<int>();
         #endregion
 
         #region Constructors
@@ -1598,6 +1548,7 @@ namespace Gravitybox.LocationService.Install
         }
 
         internal GeneratedVersion(GeneratedVersion version)
+            : this()
         {
             _build = version._build;
             _generated = version._generated;
@@ -1638,10 +1589,14 @@ namespace Gravitybox.LocationService.Install
             return false;
         }
 
+        partial void LoadedByFilename(string fileName);
+
         internal GeneratedVersion(string fileName)
+            : this()
         {
             try
             {
+                this._extra.Clear();
                 if (fileName.Contains("_"))
                 {
                     var arr1 = fileName.Split('.');
@@ -1661,6 +1616,16 @@ namespace Gravitybox.LocationService.Install
                             if (versionSplit.Length > 2) int.TryParse(versionSplit[2], out _revision);
                             if (versionSplit.Length > 3) int.TryParse(versionSplit[3], out _build);
                             if (versionSplit.Length > 4) int.TryParse(versionSplit[4], out _generated);
+
+                            //If there are >5 numbers then save the rest for sorting
+                            foreach (var item in versionSplit.Skip(5).ToList())
+                            {
+                                if (int.TryParse(item, out int v))
+                                    this._extra.Add(v);
+                                else break;
+                            }
+
+                            this.LoadedByFilename(fileName);
                             return;
                         }
                     }
@@ -1676,6 +1641,16 @@ namespace Gravitybox.LocationService.Install
                         if (arr1.Length > 2) int.TryParse(arr1[2], out _revision);
                         if (arr1.Length > 3) int.TryParse(arr1[3], out _build);
                         if (arr1.Length > 4) int.TryParse(arr1[4], out _generated);
+
+                        //If there are >5 numbers then save the rest for sorting
+                        foreach (var item in arr1.Skip(5).ToList())
+                        {
+                            if (int.TryParse(item, out int v))
+                                this._extra.Add(v);
+                            else break;
+                        }
+
+                        this.LoadedByFilename(fileName);
                     }
                 }
             }
@@ -1730,6 +1705,7 @@ namespace Gravitybox.LocationService.Install
         /// <summary />
         public int CompareTo(GeneratedVersion other)
         {
+            if ((object)other == null) return -1;
             if (this.Major != other.Major)
                 return this.Major.CompareTo(other.Major);
             else if (this.Minor != other.Minor)
@@ -1740,8 +1716,26 @@ namespace Gravitybox.LocationService.Install
                 return this.Build.CompareTo(other.Build);
             else if (this.Generated != other.Generated)
                 return this.Generated.CompareTo(other.Generated);
-            else
-                return 0;
+
+            //Check the extra digits in the version if any exist
+            var max = System.Math.Max(this._extra.Count, other._extra.Count);
+            if (max > 0)
+            {
+                var l1 = this._extra.ToList();
+                var l2 = other._extra.ToList();
+                for (var ii = l1.Count; ii < max; ii++) l1.Add(0);
+                for (var ii = l2.Count; ii < max; ii++) l2.Add(0);
+
+                for (var ii = 0; ii < max; ii++)
+                {
+                    if (l1[ii] < l2[ii])
+                        return -1;
+                    else if (l1[ii] > l2[ii])
+                        return 1;
+                }
+            }
+
+            return 0;
         }
 
         #endregion
@@ -1769,8 +1763,13 @@ namespace Gravitybox.LocationService.Install
         /// <summary />
         public string ToString(string seperationChars)
         {
-            string retval = this.Major + seperationChars + this.Minor + seperationChars + this.Revision + seperationChars + this.Build;
-            if (this.Generated != 0) retval += seperationChars + this.Generated;
+            var retval = this.Major + seperationChars + this.Minor + seperationChars + this.Revision + seperationChars + this.Build;
+            //if (this.Generated != 0) 
+            retval += seperationChars + this.Generated;
+
+            var postfix = string.Join(seperationChars, this._extra);
+            if (!string.IsNullOrEmpty(postfix)) retval += seperationChars + postfix;
+
             return retval;
         }
 
@@ -1787,8 +1786,8 @@ namespace Gravitybox.LocationService.Install
         /// <summary />
         public static bool operator <(GeneratedVersion r1, GeneratedVersion r2)
         {
-            if ((object)r1 == null && (object)r2 == null) return false;
-            if ((object)r1 == null ^ (object)r2 == null) return false;
+            if (r1 == null && r2 == null) return false;
+            if (r1 == null ^ r2 == null) return false;
 
             if (r1.Major < r2.Major) return true;
             if (r1.Major > r2.Major) return false;
@@ -1805,12 +1804,33 @@ namespace Gravitybox.LocationService.Install
             if (r1.Generated < r2.Generated) return true;
             if (r1.Generated > r2.Generated) return false;
 
+            //Check the extra digits in the version if any exist
+            var max = System.Math.Max(r1._extra.Count, r2._extra.Count);
+            if (max > 0)
+            {
+                var l1 = r1._extra.ToList();
+                var l2 = r2._extra.ToList();
+                for (var ii = l1.Count; ii < max; ii++) l1.Add(0);
+                for (var ii = l2.Count; ii < max; ii++) l2.Add(0);
+
+                for (var ii = 0; ii < max; ii++)
+                {
+                    if (l1[ii] < l2[ii])
+                        return true;
+                    else if (l1[ii] > l2[ii])
+                        return false;
+                }
+            }
+
             return false;
         }
 
         /// <summary />
         public static bool operator >(GeneratedVersion r1, GeneratedVersion r2)
         {
+            if (r1 == null && r2 == null) return false;
+            if (r1 == null ^ r2 == null) return false;
+
             if ((object)r1 == null && (object)r2 == null) return false;
             if ((object)r1 == null ^ (object)r2 == null) return false;
 
@@ -1828,6 +1848,24 @@ namespace Gravitybox.LocationService.Install
 
             if (r1.Generated > r2.Generated) return true;
             if (r1.Generated < r2.Generated) return false;
+
+            //Check the extra digits in the version if any exist
+            var max = System.Math.Max(r1._extra.Count, r2._extra.Count);
+            if (max > 0)
+            {
+                var l1 = r1._extra.ToList();
+                var l2 = r2._extra.ToList();
+                for (var ii = l1.Count; ii < max; ii++) l1.Add(0);
+                for (var ii = l2.Count; ii < max; ii++) l2.Add(0);
+
+                for (var ii = 0; ii < max; ii++)
+                {
+                    if (l1[ii] < l2[ii])
+                        return false;
+                    else if (l1[ii] > l2[ii])
+                        return true;
+                }
+            }
 
             return false;
         }
@@ -1959,7 +1997,7 @@ namespace Gravitybox.LocationService.Install
         /// <summary />
         public static byte[] ComputeHashFromFile(string fileName)
         {
-            using (Stream stream = File.OpenRead(fileName))
+            using (var stream = File.OpenRead(fileName))
             {
                 return ComputeHash(stream);
             }
@@ -2013,8 +2051,8 @@ namespace Gravitybox.LocationService.Install
         /// <summary />
         internal static byte[] ComputeHashFinalBlock(byte[] input, int ibStart, int cbSize, ABCDStruct ABCD, Int64 len)
         {
-            byte[] working = new byte[64];
-            byte[] length = BitConverter.GetBytes(len);
+            var working = new byte[64];
+            var length = BitConverter.GetBytes(len);
 
             //Padding is a single bit 1, followed by the number of 0s required to make size congruent to 448 modulo 512. Step 1 of RFC 1321  
             //The CLR ensures that our buffer is 0-assigned, we don't need to explicitly set it. This is why it ends up being quicker to just

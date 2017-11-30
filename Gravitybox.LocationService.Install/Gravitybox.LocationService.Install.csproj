@@ -155,16 +155,10 @@
     <EmbeddedResource Include="3_GeneratedTablesAndData\CreateData_1c_zip.zip" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="3_GeneratedTablesAndData\CreateSchemaAuditTriggers.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="5_Programmability\ScriptOrder.nOrder" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="5_Programmability\Functions\Model\Functions.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="3_GeneratedTablesAndData\CreateData.sql" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="1_UserDefinedInitialization\Always\ReadMe.txt" />
@@ -176,9 +170,11 @@
     <EmbeddedResource Include="5_Programmability\Views\Model\Views.sql" />
     <EmbeddedResource Include="5_Programmability\Stored Procedures\Model\StoredProcedures.sql" />
     <EmbeddedResource Include="2_Upgrade Scripts\00_00_00_02_0005_UpgradeScript.sql" />
-    <EmbeddedResource Include="2_Upgrade Scripts\0000_0000_0000_0003_0009_UpgradeScript.sql" />
     <Content Include="2_Upgrade Scripts\ReadMe.txt" />
-    <EmbeddedResource Include="3_GeneratedTablesAndData\CreateSchema.sql" />
+    <EmbeddedResource Include="3_GeneratedTablesAndData\1_CreateSchema.sql" />
+    <EmbeddedResource Include="3_GeneratedTablesAndData\2_CreateData.sql" />
+    <EmbeddedResource Include="3_GeneratedTablesAndData\4_CreateSchemaAuditTriggers.sql" />
+    <EmbeddedResource Include="3_GeneratedTablesAndData\3_CreateRelations.sql" />
     <Content Include="3_GeneratedTablesAndData\ReadMe.txt" />
     <Content Include="4_UserDefinedPostTablesAndData\Always\ReadMe.txt" />
     <Content Include="4_UserDefinedPostTablesAndData\NewDatabase\ReadMe.txt" />

@@ -319,6 +319,8 @@ namespace Gravitybox.LocationService.EFDAL
 		{
 			if (optimizer == null)
 				optimizer = new QueryOptimizer();
+			if (query == null)
+				throw new Exception("Query must be set");
 
 			//There is nothing to do
 			if (query.ToString().Replace("\r", string.Empty).Split(new char[] { '\n' }).LastOrDefault().Trim() == "WHERE 1 = 0")
@@ -354,7 +356,8 @@ namespace Gravitybox.LocationService.EFDAL
 						var context = context2.GetValue(query.Provider);
 						objectContext = context as System.Data.Entity.Core.Objects.ObjectContext;
 						var qq = objectContext.InterceptionContext.DbContexts.First() as Gravitybox.LocationService.EFDAL.ILocationServiceEntities;
-						instanceKey = qq.InstanceKey;
+						if (qq != null)
+							instanceKey = qq.InstanceKey;
 						if (string.IsNullOrEmpty(connectionString))
 						{
 							connectionString = Util.StripEFCS2Normal(objectContext.Connection.ConnectionString);
@@ -404,8 +407,7 @@ namespace Gravitybox.LocationService.EFDAL
 
 			var sb = new System.Text.StringBuilder();
 			#region Per table code
-			if (false) ;
-			else if (typeof(T) == typeof(Gravitybox.LocationService.EFDAL.Entity.State))
+			if (typeof(T) == typeof(Gravitybox.LocationService.EFDAL.Entity.State))
 			{
 				sb.AppendLine("set rowcount " + optimizer.ChunkSize + ";");
 				sb.AppendLine("delete [X] from [dbo].[State] [X] inner join (");
@@ -492,6 +494,8 @@ namespace Gravitybox.LocationService.EFDAL
 
 			if (optimizer == null)
 				optimizer = new QueryOptimizer();
+			if (query == null)
+				throw new Exception("Query must be set");
 
 			//There is nothing to do
 			if (query.ToString().Replace("\r", string.Empty).Split(new char[] { '\n' }).LastOrDefault().Trim() == "WHERE 1 = 0")
@@ -647,6 +651,11 @@ namespace Gravitybox.LocationService.EFDAL
 							else if (item.Expression.Type == typeof(DateTime))
 								value = CompileValue<DateTime>(item.Expression);
 
+							else if (item.Expression.Type == typeof(Guid?))
+								value = CompileValue<Guid?>(item.Expression);
+							else if (item.Expression.Type == typeof(Guid))
+								value = CompileValue<Guid>(item.Expression);
+
 							else
 								throw new Exception("Data type is not handled '" + item.Expression.Type.Name + "'");
 
@@ -704,8 +713,7 @@ namespace Gravitybox.LocationService.EFDAL
 
 			var sb = new System.Text.StringBuilder();
 			#region Per table code
-			if (false) ;
-			else if (typeof(T) == typeof(Gravitybox.LocationService.EFDAL.Entity.State))
+			if (typeof(T) == typeof(Gravitybox.LocationService.EFDAL.Entity.State))
 			{
 				sb.AppendLine("set rowcount " + optimizer.ChunkSize + ";");
 				foreach (var item in mapping.Where(x => x.SqlList.Any()).ToList())

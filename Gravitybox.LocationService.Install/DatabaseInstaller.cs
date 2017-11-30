@@ -147,8 +147,8 @@ namespace Gravitybox.LocationService.Install
                 //Setup trace if need be. If showing SQL then auto trace on
                 if (commandParams.ContainsKey(PARAMKEYS_TRACE) || setup.ShowSql)
                 {
-                    var trc = new System.Diagnostics.TextWriterTraceListener(Console.Out);
-                    System.Diagnostics.Debug.Listeners.Add(trc);
+                    var trc = new System.Diagnostics.ConsoleTraceListener();
+                    System.Diagnostics.Trace.Listeners.Add(trc);
                     paramUICount++;
                 }
 
@@ -194,7 +194,7 @@ namespace Gravitybox.LocationService.Install
                     {
                         if (!DropDatabase(dbname, masterConnectionString))
                             throw new Exception("The database '" + dbname + "' could not dropped.");
-                        System.Diagnostics.Debug.WriteLine("Database successfully dropped.");
+                        System.Diagnostics.Trace.WriteLine("Database successfully dropped.");
                         return;
                     }
                     throw new Exception("Invalid drop database configuration.");
@@ -307,11 +307,11 @@ namespace Gravitybox.LocationService.Install
                 using (var con = new System.Data.SqlClient.SqlConnection(masterConnectionString))
                 {
                     con.Open();
-                    var sqlCommandText = @"
-						ALTER DATABASE [" + dbname + @"] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-						DROP DATABASE [" + dbname + "]";
-                    var sqlCommand = new System.Data.SqlClient.SqlCommand(sqlCommandText, con);
-                    sqlCommand.ExecuteNonQuery();
+                    var sqlCommandText = @"ALTER DATABASE [" + dbname + @"] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;DROP DATABASE [" + dbname + "]";
+                    using (var sqlCommand = new System.Data.SqlClient.SqlCommand(sqlCommandText, con))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
                     return true;
                 }
             }
@@ -375,7 +375,7 @@ namespace Gravitybox.LocationService.Install
                 sb.AppendLine(ex.SQL);
                 sb.AppendLine("END ERROR SQL");
                 sb.AppendLine();
-                System.Diagnostics.Debug.WriteLine(sb.ToString());
+                System.Diagnostics.Trace.WriteLine(sb.ToString());
                 UpgradeInstaller.LogError(ex, sb.ToString());
                 throw;
             }
@@ -653,7 +653,7 @@ namespace Gravitybox.LocationService.Install
         public GeneratedVersion Version { get; set; }
 
         /// <summary />
-        internal bool SuppressUI { get; set; }
+        public bool SuppressUI { get; set; }
 
         /// <summary>
         /// Determines if this is a database upgrade

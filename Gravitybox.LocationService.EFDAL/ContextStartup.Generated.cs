@@ -23,7 +23,9 @@ namespace Gravitybox.LocationService.EFDAL
 	[System.CodeDom.Compiler.GeneratedCode("nHydrateModelGenerator", "6.0.0")]
 	public partial class ContextStartup : ICloneable
 	{
+		/// <summary />
 		protected internal string DebugInfo { get; set; }
+		/// <summary />
 		protected internal bool DefaultTimeout { get; private set; }
 
 		/// <summary>

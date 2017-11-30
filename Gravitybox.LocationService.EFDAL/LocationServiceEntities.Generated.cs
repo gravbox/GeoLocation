@@ -46,8 +46,6 @@ namespace Gravitybox.LocationService.EFDAL
 	/// <summary>
 	/// The object context for the schema tied to this generated model.
 	/// </summary>
-	[DataContract]
-	[Serializable]
 	public partial class LocationServiceEntities : System.Data.Entity.DbContext, Gravitybox.LocationService.EFDAL.ILocationServiceEntities, IContext
 	{
 		static LocationServiceEntities()
@@ -78,7 +76,7 @@ namespace Gravitybox.LocationService.EFDAL
 		private static Dictionary<string, SequentialIdGenerator> _sequentialIdGeneratorCache = new Dictionary<string, SequentialIdGenerator>();
 		private static object _seqCacheLock = new object();
 
-		private const string _version = "0.0.0.3.9";
+		private const string _version = "0.0.0.3.10";
 		private const string _modelKey = "792c16d4-9353-4f34-bf2b-4c66aa688643";
 
 		/// <summary />
@@ -332,6 +330,10 @@ namespace Gravitybox.LocationService.EFDAL
 			OnBeforeSaveChanges(ref cancel);
 			if (cancel) return 0;
 
+			//This must be called to truly see all Added/Updated Entities in the ObjectStateManager!!!
+			//Items added to context work fine, but children added to parent objects do not i.e. 'ParentObject.ChildItems.Add(newChild)'
+			this.ChangeTracker.Entries().Any();
+
 			//Get the added list
 			var addedList = this.ObjectContext.ObjectStateManager.GetObjectStateEntries(System.Data.Entity.EntityState.Added);
 			var markedTime = System.DateTime.Now;
@@ -342,13 +344,16 @@ namespace Gravitybox.LocationService.EFDAL
 				if (entity != null)
 				{
 					var audit = entity as IAuditableSet;
-					if (entity.IsModifyAuditImplemented && entity.ModifiedBy != this.ContextStartup.Modifer)
+					if (audit != null && entity.IsModifyAuditImplemented && entity.ModifiedBy != this.ContextStartup.Modifer)
 					{
 						if (audit != null) audit.ResetCreatedBy(this.ContextStartup.Modifer);
 						if (audit != null) audit.ResetModifiedBy(this.ContextStartup.Modifer);
 					}
-					audit.CreatedDate = markedTime;
-					audit.ModifiedDate = markedTime;
+					if (audit != null)
+					{
+						audit.CreatedDate = markedTime;
+						audit.ModifiedDate = markedTime;
+					}
 				}
 			}
 			this.OnBeforeSaveAddedEntity(new EventArguments.EntityListEventArgs { List = addedList });
@@ -502,38 +507,35 @@ namespace Gravitybox.LocationService.EFDAL
 		/// </summary>
 		public string GetDBVersion(string connectionString = null)
 		{
-			var conn = new System.Data.SqlClient.SqlConnection();
 			try
 			{
-				if (string.IsNullOrEmpty(connectionString))
-					connectionString = this.ConnectionString;
-				conn.ConnectionString = connectionString;
-				conn.Open();
-
-				var da = new SqlDataAdapter("select * from sys.tables where name = '__nhydrateschema'", conn);
-				var ds = new DataSet();
-				da.Fill(ds);
-				if (ds.Tables[0].Rows.Count > 0)
+				using (var conn = new System.Data.SqlClient.SqlConnection())
 				{
-					da = new SqlDataAdapter("SELECT * FROM [__nhydrateschema] where [ModelKey] = '" + this.ModelKey + "'", conn);
-					ds = new DataSet();
+					if (string.IsNullOrEmpty(connectionString))
+						connectionString = this.ConnectionString;
+					conn.ConnectionString = connectionString;
+					conn.Open();
+
+					var da = new SqlDataAdapter("select * from sys.tables where name = '__nhydrateschema'", conn);
+					var ds = new DataSet();
 					da.Fill(ds);
-					var t = ds.Tables[0];
-					if (t.Rows.Count > 0)
+					if (ds.Tables[0].Rows.Count > 0)
 					{
-						return (string) t.Rows[0]["dbVersion"];
+						da = new SqlDataAdapter("SELECT * FROM [__nhydrateschema] where [ModelKey] = '" + this.ModelKey + "'", conn);
+						ds = new DataSet();
+						da.Fill(ds);
+						var t = ds.Tables[0];
+						if (t.Rows.Count > 0)
+						{
+							return (string) t.Rows[0]["dbVersion"];
+						}
 					}
+					return string.Empty;
 				}
-				return string.Empty;
 			}
 			catch (Exception)
 			{
 				return string.Empty;
-			}
-			finally
-			{
-				if (conn != null)
-					conn.Close();
 			}
 		}
 
@@ -798,7 +800,7 @@ namespace Gravitybox.LocationService.EFDAL
 			try
 			{
 				//If this is a tenant table then rig query plan for this specific tenant
-				if (command.CommandText.Contains("__vw_tenant_"))
+				if (command.CommandText.Contains("__vw_tenant_") || command.CommandText.Contains("__security"))
 				{
 					var builder = new SqlConnectionStringBuilder(command.Connection.ConnectionString);
 					command.CommandText = "--T:" + builder.UserID + "\r\n" + command.CommandText;
