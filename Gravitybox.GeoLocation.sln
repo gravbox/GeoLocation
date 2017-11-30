@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelProject", "ModelProject\ModelProject.csproj", "{31FDA387-EFBE-4088-B85C-156C1D59C134}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.GeoLocation.Interfaces", "Gravitybox.GeoLocation.Interfaces\Gravitybox.GeoLocation.Interfaces.csproj", "{134DE755-6D44-4780-BD1E-E0756D2C760C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.LocationService.EFDAL", "Gravitybox.LocationService.EFDAL\Gravitybox.LocationService.EFDAL.csproj", "{9F932945-7F92-42A5-AC4A-EEE176F57CCC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.GeoLocation.EFDAL", "Gravitybox.GeoLocation.EFDAL\Gravitybox.GeoLocation.EFDAL.csproj", "{9F932945-7F92-42A5-AC4A-EEE176F57CCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.LocationService.Install", "Gravitybox.LocationService.Install\Gravitybox.LocationService.Install.csproj", "{5E219C6C-BA45-4C24-907C-00A5E6D193EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.GeoLocation.Install", "Gravitybox.GeoLocation.Install\Gravitybox.GeoLocation.Install.csproj", "{5E219C6C-BA45-4C24-907C-00A5E6D193EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.Webservice.GeoLocationService", "Gravitybox.Webservice.GeoLocationService\Gravitybox.Webservice.GeoLocationService.csproj", "{5B64BBE5-97BC-4D5F-B1CB-CB716F35BB68}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravitybox.GeoLocation.LocationService", "Gravitybox.GeoLocation.LocationService\Gravitybox.GeoLocation.LocationService.csproj", "{5B64BBE5-97BC-4D5F-B1CB-CB716F35BB68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,5 +42,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E265FD9D-2265-48D8-B2AE-E78C9EB08BEF}
 	EndGlobalSection
 EndGlobal

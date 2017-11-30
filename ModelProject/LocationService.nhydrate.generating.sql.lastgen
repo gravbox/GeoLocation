@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <modelRoot guid="792c16d4-9353-4f34-bf2b-4c66aa688643" type="nHydrate.Generator.nHydrateGeneratorProject" assembly="nHydrate.Generator.dll">
-		<ModelRoot key="792c16d4-9353-4f34-bf2b-4c66aa688643" projectName="LocationService" transformNames="0" enableCustomChangeEvents="1" supportLegacySearchObject="0" useUTCTime="False" version="0.0.0.3" companyName="Gravitybox" emitSafetyScripts="1" tenantColumnName="__tenant_user" tenantPrefix="__vw_tenant" allowMocks="0" companyAbbreviation="" defaultNamespace="" storedProcedurePrefix="gen" sqlType="SQL2008" efversion="EF6" frameworkVersion="v35">
+		<ModelRoot key="792c16d4-9353-4f34-bf2b-4c66aa688643" projectName="GeoLocation" transformNames="0" enableCustomChangeEvents="1" supportLegacySearchObject="0" useUTCTime="False" version="0.0.0.3" companyName="Gravitybox" emitSafetyScripts="1" tenantColumnName="__tenant_user" tenantPrefix="__vw_tenant" allowMocks="0" companyAbbreviation="" defaultNamespace="" storedProcedurePrefix="gen" sqlType="SQL2008" efversion="EF6" frameworkVersion="v35">
 				<copyright><![CDATA[]]></copyright>
 				<database key="792c16d4-9353-4f34-bf2b-4c66aa688643" createdByColumnName="CreatedBy" createdDateColumnName="CreatedDate" modifiedByColumnName="ModifiedBy" modifiedDateColumnName="ModifiedDate" timestampColumnName="TimeStamp" fullIndexSearchColumnName="full_index_text" grantExecUser="" useGeneratedCRUD="False" tablePrefix="" collate="" databaseName="">
 						<columns key="00000000-0000-0000-0000-000000000000">
@@ -124,7 +124,7 @@
 						<customstoredprocedures key="00000000-0000-0000-0000-000000000000" />
 				</database>
 				<versionHistoryList>
-						<version createdDate="2017-11-30 08:53:01" version="0.0.0.3" />
+						<version createdDate="2017-11-30 10:04:38" version="0.0.0.3" />
 				</versionHistoryList>
 		</ModelRoot>
 </modelRoot>

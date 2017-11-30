@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Gravitybox.GeoLocation.LocationService.GeoLocationService" CodeBehind="Lookup.svc.cs" %>

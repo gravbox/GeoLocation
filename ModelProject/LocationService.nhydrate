@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<nHydrateModel dslVersion="6.0.0.205" Id="792c16d4-9353-4f34-bf2b-4c66aa688643" companyName="Gravitybox" projectName="LocationService" version="0.0.0.3" timestampColumnName="TimeStamp" modelVersion="5.1.2.115" useGeneratedCRUD="false" diagramVisibility="Function, StoredProcedure, View">
+<nHydrateModel dslVersion="6.0.0.205" Id="792c16d4-9353-4f34-bf2b-4c66aa688643" companyName="Gravitybox" projectName="GeoLocation" version="0.0.0.3" timestampColumnName="TimeStamp" modelVersion="5.1.2.115" useGeneratedCRUD="false" diagramVisibility="Function, StoredProcedure, View">
   <entities>
     <entity Id="82c6a2d7-716d-43e6-8370-1a95cfe6e486" name="Zip" copyStateInfo="">
       <fields>

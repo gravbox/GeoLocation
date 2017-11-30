@@ -1,3 +1,0 @@
-namespace Gravitybox.LocationService.EFDAL
-{
-}
