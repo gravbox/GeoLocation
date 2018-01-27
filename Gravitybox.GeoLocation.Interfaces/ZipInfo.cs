@@ -22,5 +22,15 @@ namespace Gravitybox.GeoLocation.Interfaces
         public double Latitude { get; set; }
         [DataMember]
         public double Longitude { get; set; }
+
+        public override string ToString()
+        {
+            if (!string.IsNullOrEmpty(this.City) && !string.IsNullOrEmpty(this.State))
+                return $"{this.City}, {this.State}";
+            else if (!string.IsNullOrEmpty(this.City))
+                return $"{this.Name}";
+            else
+                return string.Empty;
+        }
     }
 }

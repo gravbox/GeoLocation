@@ -48,6 +48,29 @@ namespace Gravitybox.GeoLocation.LocationService
                             return zip.ToZipInfo();
                         }
                     }
+                    else if (arr.Length == 1)
+                    {
+                        //If this matches exactly pull back one with largest population
+                        var cityValue = arr[0].Trim();
+                        var lambda = context.Zip.Where(x => x.City == cityValue).OrderByDescending(x => x.Population);
+                        //var count = lambda.Count();
+                        zip = lambda.FirstOrDefault();
+                        if (zip != null)
+                        {
+                            found = true;
+                            return zip.ToZipInfo();
+                        }
+
+                        ////Determine if text contains in any city. If matches exactly one then use it
+                        //lambda = context.Zip.Where(x => x.City.Contains(cityValue)).OrderByDescending(x => x.Population);
+                        //count = lambda.Count();
+                        //zip = lambda.FirstOrDefault();
+                        //if (count == 1 && zip != null)
+                        //{
+                        //    found = true;
+                        //    return zip.ToZipInfo();
+                        //}
+                    }
 
                     var stateRaw = arr[arr.Length - 1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
                     var protoZip = stateRaw.Last();
