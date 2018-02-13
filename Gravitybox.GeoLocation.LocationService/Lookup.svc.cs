@@ -301,11 +301,12 @@ namespace Gravitybox.GeoLocation.LocationService
                     }
                     else
                     {
+                        //Group by city/state and sum population so can order by largest overall population, not individual zip code
                         retval.AddRange(
                             context.Zip
-                            .Where(x => x.City.Contains(term) ||
-                                x.Name.Contains(term) ||
-                                x.State.Contains(term))
+                            .Where(x => (x.City.Contains(term) || x.Name.Contains(term) || x.State.Contains(term)) && x.Population != null)
+                                .GroupBy(x => new { x.City, x.State })
+                                .Select(x => new { x.Key.City, x.Key.State, Population = x.Sum(z => z.Population), Zip = x.Max(z => z.Name) })
                                 .OrderByDescending(x => x.Population)
                         .Select(x => new { cs = x.City + ", " + x.State, x.Population })
                         .Distinct()
