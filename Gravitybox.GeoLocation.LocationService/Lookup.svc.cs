@@ -257,18 +257,16 @@ namespace Gravitybox.GeoLocation.LocationService
 
                 using (var context = new GeoLocationEntities())
                 {
-                    //If numeric then assuem it is zip
-                    int zipCode;
-                    if (int.TryParse(term, out zipCode))
+                    //If numeric then assume it is zip
+                    if (int.TryParse(term, out int zipCode))
                     {
                         //If zip code then return zips
                         retval.AddRange(
                             context.Zip
-                            .Where(x => x.City.Contains(term) ||
-                            x.Name.Contains(term) ||
-                            x.State.Contains(term))
+                            .Where(x => x.Name.Contains(term))
                             .Select(x => x.City + ", " + x.State + " " + x.Name)
                             .ToList());
+                        Logger.LogInfo($"GetLookup: Path1, Count={retval.Count}");
                         return retval;
                     }
 
@@ -298,13 +296,14 @@ namespace Gravitybox.GeoLocation.LocationService
                         .ToList()
                         .OrderByDescending(x => x.Population)
                         .Select(x => x.cs));
+                        Logger.LogInfo($"GetLookup: Path2, Count={retval.Count}");
                     }
                     else
                     {
                         //Group by city/state and sum population so can order by largest overall population, not individual zip code
                         retval.AddRange(
                             context.Zip
-                            .Where(x => (x.City.Contains(term) || x.Name.Contains(term) || x.State.Contains(term)) && x.Population != null)
+                            .Where(x => x.City.Contains(term) || x.Name.Contains(term) || x.State.Contains(term))
                                 .GroupBy(x => new { x.City, x.State })
                                 .Select(x => new { x.Key.City, x.Key.State, Population = x.Sum(z => z.Population), Zip = x.Max(z => z.Name) })
                                 .OrderByDescending(x => x.Population)
@@ -314,6 +313,7 @@ namespace Gravitybox.GeoLocation.LocationService
                         .ToList()
                         .OrderByDescending(x => x.Population)
                         .Select(x => x.cs));
+                        Logger.LogInfo($"GetLookup: Path3, Count={retval.Count}");
                     }
 
                     return retval;
