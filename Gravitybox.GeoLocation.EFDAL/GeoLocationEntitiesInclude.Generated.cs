@@ -14,6 +14,20 @@ using Gravitybox.GeoLocation.EFDAL;
 
 namespace Gravitybox.GeoLocation.EFDAL
 {
+	#region CityInclude
+
+	/// <summary>
+	/// This is a helper object for creating LINQ definitions for context includes on the City collection.
+	/// </summary>
+	[Serializable]
+	[Table(Name = "City")]
+	[System.CodeDom.Compiler.GeneratedCode("nHydrateModelGenerator", "6.0.0")]
+	public partial class CityInclude : Gravitybox.GeoLocation.EFDAL.IContextInclude
+	{
+	}
+
+	#endregion
+
 	#region StateInclude
 
 	/// <summary>

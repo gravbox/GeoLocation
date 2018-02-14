@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-#region Copyright (c) 2006-2017 nHydrate.org, All Rights Reserved
+#region Copyright (c) 2006-2018 nHydrate.org, All Rights Reserved
 // -------------------------------------------------------------------------- *
 //                           NHYDRATE.ORG                                     *
-//              Copyright (c) 2006-2017 All Rights reserved                   *
+//              Copyright (c) 2006-2018 All Rights reserved                   *
 //                                                                            *
 //                                                                            *
 // Permission is hereby granted, free of charge, to any person obtaining a    *
@@ -307,11 +307,11 @@ namespace Gravitybox.GeoLocation.Install
                 using (var con = new System.Data.SqlClient.SqlConnection(masterConnectionString))
                 {
                     con.Open();
-                    var sqlCommandText = @"
-						ALTER DATABASE [" + dbname + @"] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-						DROP DATABASE [" + dbname + "]";
-                    var sqlCommand = new System.Data.SqlClient.SqlCommand(sqlCommandText, con);
-                    sqlCommand.ExecuteNonQuery();
+                    var sqlCommandText = @"ALTER DATABASE [" + dbname + @"] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;DROP DATABASE [" + dbname + "]";
+                    using (var sqlCommand = new System.Data.SqlClient.SqlCommand(sqlCommandText, con))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
                     return true;
                 }
             }
@@ -541,10 +541,6 @@ namespace Gravitybox.GeoLocation.Install
                 {
                     UpgradeInstaller.UpgradeDatabase(setup);
                 }
-                else if (this.Action == ActionTypeConstants.AzureCopy)
-                {
-                    UpgradeInstaller.AzureCopyDatabase(this.Settings);
-                }
             }
         }
 
@@ -653,7 +649,7 @@ namespace Gravitybox.GeoLocation.Install
         public GeneratedVersion Version { get; set; }
 
         /// <summary />
-        internal bool SuppressUI { get; set; }
+        public bool SuppressUI { get; set; }
 
         /// <summary>
         /// Determines if this is a database upgrade

@@ -70,6 +70,8 @@ namespace Gravitybox.GeoLocation.EFDAL
 		/// </summary>
 		public static System.Type GetFieldType(this Gravitybox.GeoLocation.EFDAL.GeoLocationEntities context, Enum field)
 		{
+			if (field is Gravitybox.GeoLocation.EFDAL.Entity.City.FieldNameConstants)
+				return Gravitybox.GeoLocation.EFDAL.Entity.City.GetFieldType((Gravitybox.GeoLocation.EFDAL.Entity.City.FieldNameConstants)field);
 			if (field is Gravitybox.GeoLocation.EFDAL.Entity.State.FieldNameConstants)
 				return Gravitybox.GeoLocation.EFDAL.Entity.State.GetFieldType((Gravitybox.GeoLocation.EFDAL.Entity.State.FieldNameConstants)field);
 			if (field is Gravitybox.GeoLocation.EFDAL.Entity.Zip.FieldNameConstants)
@@ -106,6 +108,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 		{
 			switch (entityType)
 			{
+				case EntityMappingConstants.City: return typeof(Gravitybox.GeoLocation.EFDAL.Entity.City);
 				case EntityMappingConstants.State: return typeof(Gravitybox.GeoLocation.EFDAL.Entity.State);
 				case EntityMappingConstants.Zip: return typeof(Gravitybox.GeoLocation.EFDAL.Entity.Zip);
 			}
@@ -319,6 +322,8 @@ namespace Gravitybox.GeoLocation.EFDAL
 		{
 			if (optimizer == null)
 				optimizer = new QueryOptimizer();
+			if (query == null)
+				throw new Exception("Query must be set");
 
 			//There is nothing to do
 			if (query.ToString().Replace("\r", string.Empty).Split(new char[] { '\n' }).LastOrDefault().Trim() == "WHERE 1 = 0")
@@ -354,7 +359,8 @@ namespace Gravitybox.GeoLocation.EFDAL
 						var context = context2.GetValue(query.Provider);
 						objectContext = context as System.Data.Entity.Core.Objects.ObjectContext;
 						var qq = objectContext.InterceptionContext.DbContexts.First() as Gravitybox.GeoLocation.EFDAL.IGeoLocationEntities;
-						instanceKey = qq.InstanceKey;
+						if (qq != null)
+							instanceKey = qq.InstanceKey;
 						if (string.IsNullOrEmpty(connectionString))
 						{
 							connectionString = Util.StripEFCS2Normal(objectContext.Connection.ConnectionString);
@@ -404,7 +410,16 @@ namespace Gravitybox.GeoLocation.EFDAL
 
 			var sb = new System.Text.StringBuilder();
 			#region Per table code
-			if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.State))
+			if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.City))
+			{
+				sb.AppendLine("set rowcount " + optimizer.ChunkSize + ";");
+				sb.AppendLine("delete [X] from [dbo].[City] [X] inner join (");
+				sb.AppendLine(((IQueryable<Gravitybox.GeoLocation.EFDAL.Entity.City>)query).Select(x => new { x.CityId }).ToString());
+				sb.AppendLine(") AS [Extent2]");
+				sb.AppendLine("on [X].[CityId] = [Extent2].[CityId]");
+				sb.AppendLine("select @@ROWCOUNT");
+			}
+			else if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.State))
 			{
 				sb.AppendLine("set rowcount " + optimizer.ChunkSize + ";");
 				sb.AppendLine("delete [X] from [dbo].[State] [X] inner join (");
@@ -491,6 +506,8 @@ namespace Gravitybox.GeoLocation.EFDAL
 
 			if (optimizer == null)
 				optimizer = new QueryOptimizer();
+			if (query == null)
+				throw new Exception("Query must be set");
 
 			//There is nothing to do
 			if (query.ToString().Replace("\r", string.Empty).Split(new char[] { '\n' }).LastOrDefault().Trim() == "WHERE 1 = 0")
@@ -708,7 +725,21 @@ namespace Gravitybox.GeoLocation.EFDAL
 
 			var sb = new System.Text.StringBuilder();
 			#region Per table code
-			if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.State))
+			if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.City))
+			{
+				sb.AppendLine("set rowcount " + optimizer.ChunkSize + ";");
+				foreach (var item in mapping.Where(x => x.SqlList.Any()).ToList())
+				{
+					sb.AppendLine("UPDATE [X] SET");
+					sb.AppendLine(string.Join(", ", item.SqlList));
+					sb.AppendLine("FROM [" + item.Schema + "].[" + item.TableName + "] AS [X] INNER JOIN (");
+					sb.AppendLine(((IQueryable<Gravitybox.GeoLocation.EFDAL.Entity.City>)query).Select(x => new { x.CityId }).ToString());
+					sb.AppendLine(") AS [Extent2]");
+					sb.AppendLine("on [X].[CityId] = [Extent2].[CityId]");
+					sb.AppendLine("select @@ROWCOUNT");
+				}
+			}
+			else if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.State))
 			{
 				sb.AppendLine("set rowcount " + optimizer.ChunkSize + ";");
 				foreach (var item in mapping.Where(x => x.SqlList.Any()).ToList())

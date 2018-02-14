@@ -1,6 +1,26 @@
 --DO NOT MODIFY THIS FILE. IT IS ALWAYS OVERWRITTEN ON GENERATION.
 --Data Schema
 
+--CREATE TABLE [City]
+if not exists(select * from sysobjects where name = 'City' and xtype = 'U')
+CREATE TABLE [dbo].[City] (
+	[CityId] [Int] IDENTITY (1, 1) NOT NULL ,
+	[Name] [VarChar] (100) NULL ,
+	[State] [VarChar] (50) NULL ,
+	[Population] [Int] NULL ,
+	[ModifiedBy] [NVarchar] (50) NULL,
+	[ModifiedDate] [DateTime2] CONSTRAINT [DF__CITY_MODIFIEDDATE] DEFAULT sysdatetime() NULL,
+	[CreatedBy] [NVarchar] (50) NULL,
+	[CreatedDate] [DateTime2] CONSTRAINT [DF__CITY_CREATEDDATE] DEFAULT sysdatetime() NULL,
+	[TimeStamp] [ROWVERSION] NOT NULL,
+	CONSTRAINT [PK_CITY] PRIMARY KEY CLUSTERED
+	(
+		[CityId]
+	)
+)
+
+GO
+
 --CREATE TABLE [State]
 if not exists(select * from sysobjects where name = 'State' and xtype = 'U')
 CREATE TABLE [dbo].[State] (
@@ -45,6 +65,16 @@ CREATE TABLE [dbo].[Zip] (
 GO
 
 --##SECTION BEGIN [FIELD CREATE]
+--TABLE [City] ADD FIELDS
+if exists(select * from sys.objects where name = 'City' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'CityId' and o.name = 'City')
+ALTER TABLE [dbo].[City] ADD [CityId] [Int] IDENTITY (1, 1) NOT NULL 
+if exists(select * from sys.objects where name = 'City' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'Name' and o.name = 'City')
+ALTER TABLE [dbo].[City] ADD [Name] [VarChar] (100) NULL 
+if exists(select * from sys.objects where name = 'City' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'State' and o.name = 'City')
+ALTER TABLE [dbo].[City] ADD [State] [VarChar] (50) NULL 
+if exists(select * from sys.objects where name = 'City' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'Population' and o.name = 'City')
+ALTER TABLE [dbo].[City] ADD [Population] [Int] NULL 
+GO
 --TABLE [State] ADD FIELDS
 if exists(select * from sys.objects where name = 'State' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'Abbr' and o.name = 'State')
 ALTER TABLE [dbo].[State] ADD [Abbr] [VarChar] (2) NOT NULL 
@@ -74,6 +104,27 @@ GO
 --##SECTION END [FIELD CREATE]
 
 --##SECTION BEGIN [AUDIT TRAIL CREATE]
+
+--APPEND AUDIT TRAIL CREATE FOR TABLE [City]
+if exists(select * from sys.objects where name = 'City' and type = 'U') and not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'CreatedBy' and o.name = 'City')
+ALTER TABLE [dbo].[City] ADD [CreatedBy] [NVarchar] (50) NULL
+if exists(select * from sys.objects where name = 'City' and type = 'U') and not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'CreatedDate' and o.name = 'City')
+ALTER TABLE [dbo].[City] ADD [CreatedDate] [DateTime2] CONSTRAINT [DF__CITY_CREATEDDATE] DEFAULT sysdatetime() NULL
+GO
+
+--APPEND AUDIT TRAIL MODIFY FOR TABLE [City]
+if exists(select * from sys.objects where name = 'City' and type = 'U') and not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'ModifiedBy' and o.name = 'City')
+ALTER TABLE [dbo].[City] ADD [ModifiedBy] [NVarchar] (50) NULL
+if exists(select * from sys.objects where name = 'City' and type = 'U') and not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'ModifiedDate' and o.name = 'City')
+ALTER TABLE [dbo].[City] ADD [ModifiedDate] [DateTime2] CONSTRAINT [DF__CITY_MODIFIEDDATE] DEFAULT sysdatetime() NULL
+GO
+
+--APPEND AUDIT TRAIL TIMESTAMP FOR TABLE [City]
+if exists(select * from sys.objects where name = 'City' and type = 'U') and not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'TimeStamp' and o.name = 'City')
+ALTER TABLE [dbo].[City] ADD [TimeStamp] [ROWVERSION] NOT NULL
+GO
+
+GO
 
 --APPEND AUDIT TRAIL CREATE FOR TABLE [State]
 if exists(select * from sys.objects where name = 'State' and type = 'U') and not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'CreatedBy' and o.name = 'State')
@@ -126,6 +177,9 @@ GO
 --##SECTION BEGIN [RENAME PK]
 
 --RENAME EXISTING PRIMARY KEYS IF NECESSARY
+DECLARE @pkfixCity varchar(500)
+SET @pkfixCity = (SELECT top 1 i.name AS IndexName FROM sys.indexes AS i WHERE i.is_primary_key = 1 AND OBJECT_NAME(i.OBJECT_ID) = 'City')
+if @pkfixCity <> '' and (BINARY_CHECKSUM(@pkfixCity) <> BINARY_CHECKSUM('PK_CITY')) exec('sp_rename '''+@pkfixCity+''', ''PK_CITY''')
 DECLARE @pkfixState varchar(500)
 SET @pkfixState = (SELECT top 1 i.name AS IndexName FROM sys.indexes AS i WHERE i.is_primary_key = 1 AND OBJECT_NAME(i.OBJECT_ID) = 'State')
 if @pkfixState <> '' and (BINARY_CHECKSUM(@pkfixState) <> BINARY_CHECKSUM('PK_STATE')) exec('sp_rename '''+@pkfixState+''', ''PK_STATE''')
@@ -142,6 +196,14 @@ GO
 
 --##SECTION BEGIN [CREATE PK]
 
+--PRIMARY KEY FOR TABLE [City]
+if not exists(select * from sysobjects where name = 'PK_CITY' and xtype = 'PK')
+ALTER TABLE [dbo].[City] WITH NOCHECK ADD 
+CONSTRAINT [PK_CITY] PRIMARY KEY CLUSTERED
+(
+	[CityId]
+)
+GO
 --PRIMARY KEY FOR TABLE [State]
 if not exists(select * from sysobjects where name = 'PK_STATE' and xtype = 'PK')
 ALTER TABLE [dbo].[State] WITH NOCHECK ADD 
@@ -162,6 +224,11 @@ GO
 
 --##SECTION BEGIN [AUDIT TABLES PK]
 
+--DROP PRIMARY KEY FOR TABLE [__AUDIT__CITY]
+if exists(select * from sys.objects where name = 'PK___AUDIT__CITY' and type = 'PK' and type_desc = 'PRIMARY_KEY_CONSTRAINT')
+ALTER TABLE [dbo].[__AUDIT__CITY] DROP CONSTRAINT [PK___AUDIT__CITY]
+GO
+
 --DROP PRIMARY KEY FOR TABLE [__AUDIT__STATE]
 if exists(select * from sys.objects where name = 'PK___AUDIT__STATE' and type = 'PK' and type_desc = 'PRIMARY_KEY_CONSTRAINT')
 ALTER TABLE [dbo].[__AUDIT__STATE] DROP CONSTRAINT [PK___AUDIT__STATE]
@@ -175,6 +242,16 @@ GO
 --##SECTION END [AUDIT TABLES PK]
 
 --##SECTION BEGIN [CREATE INDEXES]
+
+--DELETE INDEX
+if exists(select * from sys.indexes where name = 'IDX_CITY_STATE' and type_desc = 'CLUSTERED')
+DROP INDEX [IDX_CITY_STATE] ON [dbo].[City]
+GO
+
+--INDEX FOR TABLE [City] COLUMNS:[State]
+if not exists(select * from sys.indexes where name = 'IDX_CITY_STATE') and exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'State' and o.name = 'City')
+CREATE NONCLUSTERED INDEX [IDX_CITY_STATE] ON [dbo].[City] ([State] ASC)
+GO
 
 --DELETE INDEX
 if exists(select * from sys.indexes where name = 'IDX_STATE_ABBR' and type_desc = 'CLUSTERED')
@@ -243,6 +320,23 @@ GO
 --##SECTION END [TENANT INDEXES]
 
 --##SECTION BEGIN [REMOVE DEFAULTS]
+
+--BEGIN DEFAULTS FOR TABLE [City]
+DECLARE @defaultName varchar(max)
+SET @defaultName = (SELECT d.name FROM sys.columns c inner join sys.default_constraints d on c.column_id = d.parent_column_id and c.object_id = d.parent_object_id inner join sys.objects o on d.parent_object_id = o.object_id where o.name = 'City' and c.name = 'CityId')
+if @defaultName IS NOT NULL
+exec('ALTER TABLE [City] DROP CONSTRAINT ' + @defaultName)
+SET @defaultName = (SELECT d.name FROM sys.columns c inner join sys.default_constraints d on c.column_id = d.parent_column_id and c.object_id = d.parent_object_id inner join sys.objects o on d.parent_object_id = o.object_id where o.name = 'City' and c.name = 'Name')
+if @defaultName IS NOT NULL
+exec('ALTER TABLE [City] DROP CONSTRAINT ' + @defaultName)
+SET @defaultName = (SELECT d.name FROM sys.columns c inner join sys.default_constraints d on c.column_id = d.parent_column_id and c.object_id = d.parent_object_id inner join sys.objects o on d.parent_object_id = o.object_id where o.name = 'City' and c.name = 'Population')
+if @defaultName IS NOT NULL
+exec('ALTER TABLE [City] DROP CONSTRAINT ' + @defaultName)
+SET @defaultName = (SELECT d.name FROM sys.columns c inner join sys.default_constraints d on c.column_id = d.parent_column_id and c.object_id = d.parent_object_id inner join sys.objects o on d.parent_object_id = o.object_id where o.name = 'City' and c.name = 'State')
+if @defaultName IS NOT NULL
+exec('ALTER TABLE [City] DROP CONSTRAINT ' + @defaultName)
+--END DEFAULTS FOR TABLE [City]
+GO
 
 --BEGIN DEFAULTS FOR TABLE [State]
 DECLARE @defaultName varchar(max)

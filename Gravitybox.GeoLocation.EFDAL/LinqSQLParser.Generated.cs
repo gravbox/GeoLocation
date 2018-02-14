@@ -180,7 +180,8 @@ namespace Gravitybox.GeoLocation.EFDAL
 		{
 			field = field.Replace("[", string.Empty).Replace("]", string.Empty);
 			string realTable = string.Empty;
-			if (parentTable == "State") realTable = Gravitybox.GeoLocation.EFDAL.Entity.State.GetTableFromFieldNameSqlMapping(field);
+			if (parentTable == "City") realTable = Gravitybox.GeoLocation.EFDAL.Entity.City.GetTableFromFieldNameSqlMapping(field);
+			else if (parentTable == "State") realTable = Gravitybox.GeoLocation.EFDAL.Entity.State.GetTableFromFieldNameSqlMapping(field);
 			else if (parentTable == "Zip") realTable = Gravitybox.GeoLocation.EFDAL.Entity.Zip.GetTableFromFieldNameSqlMapping(field);
 			LinqSQLFromClause sqlFromClause = this.GetByTable(realTable);
 			return sqlFromClause.TableName;
@@ -474,6 +475,10 @@ namespace Gravitybox.GeoLocation.EFDAL
 				//Do all field replacements
 				if (_type == ObjectTypeConstants.Table)
 				{
+					if (fromClause.TableName == "City")
+					{
+						childTables.Add(fromClause);
+					}
 					if (fromClause.TableName == "State")
 					{
 						childTables.Add(fromClause);
@@ -500,7 +505,8 @@ namespace Gravitybox.GeoLocation.EFDAL
 				string realTable = string.Empty;
 				if (_type == ObjectTypeConstants.Table)
 				{
-					if (clause.TableName == "State") realTable = Gravitybox.GeoLocation.EFDAL.Entity.State.GetTableFromFieldAliasSqlMapping(field.Alias);
+					if (clause.TableName == "City") realTable = Gravitybox.GeoLocation.EFDAL.Entity.City.GetTableFromFieldAliasSqlMapping(field.Alias);
+					else if (clause.TableName == "State") realTable = Gravitybox.GeoLocation.EFDAL.Entity.State.GetTableFromFieldAliasSqlMapping(field.Alias);
 					else if (clause.TableName == "Zip") realTable = Gravitybox.GeoLocation.EFDAL.Entity.Zip.GetTableFromFieldAliasSqlMapping(field.Alias);
 				}
 				var sqlFromClause = _fromLinkList.GetByTable(realTable);
@@ -527,6 +533,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 			{
 				switch (tableInfo.TableName)
 				{
+					case "City": return Gravitybox.GeoLocation.EFDAL.Entity.City.GetRemappedLinqSql(whereClause, tableInfo.Alias, fromLinkList);
 					case "State": return Gravitybox.GeoLocation.EFDAL.Entity.State.GetRemappedLinqSql(whereClause, tableInfo.Alias, fromLinkList);
 					case "Zip": return Gravitybox.GeoLocation.EFDAL.Entity.Zip.GetRemappedLinqSql(whereClause, tableInfo.Alias, fromLinkList);
 				}
@@ -608,6 +615,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 					LinqSQLFromClause clause = _fromLinkList.FirstOrDefault(x => x.Alias == table.Replace("[", string.Empty).Replace("]", string.Empty));
 					switch (clause.TableName)
 					{
+						case "City": alias = Gravitybox.GeoLocation.EFDAL.Entity.City.GetFieldAliasFromFieldNameSqlMapping(field); break;
 						case "State": alias = Gravitybox.GeoLocation.EFDAL.Entity.State.GetFieldAliasFromFieldNameSqlMapping(field); break;
 						case "Zip": alias = Gravitybox.GeoLocation.EFDAL.Entity.Zip.GetFieldAliasFromFieldNameSqlMapping(field); break;
 					}
@@ -726,6 +734,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 		public const string ERROR_DATA_TOO_BIG = "The data '{0}' is too large for the {1} field which has a length of {2}.";
 		public const string ERROR_INVALID_ENUM = "The value '{0}' set to the '{1}' field is not valid based on the backing enumeration.";
 		public static readonly DateTime MIN_DATETIME = new DateTime(1753, 1, 1);
+		public const string YMDHMS_FORMAT = "yyyy-MM-dd HH:mm:ss";
 		public static readonly DateTime MAX_DATETIME = new DateTime(9999, 12, 31, 23, 59, 59);
 		private const string INVALID_BUSINIESSOBJECT = "An invalid object of type 'IBusinessObject' was passed in. Perhaps a relationship was not enforced correctly.";
 

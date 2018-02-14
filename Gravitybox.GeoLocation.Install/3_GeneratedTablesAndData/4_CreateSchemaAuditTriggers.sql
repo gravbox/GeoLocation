@@ -3,6 +3,17 @@
 
 --##SECTION BEGIN [AUDIT TRIGGERS]
 
+--DROP ANY AUDIT TRIGGERS FOR [dbo].[City]
+if exists(select * from sysobjects where name = '__TR_City__INSERT' AND xtype = 'TR')
+DROP TRIGGER [dbo].[__TR_City__INSERT]
+GO
+if exists(select * from sysobjects where name = '__TR_City__UPDATE' AND xtype = 'TR')
+DROP TRIGGER [dbo].[__TR_City__UPDATE]
+GO
+if exists(select * from sysobjects where name = '__TR_City__DELETE' AND xtype = 'TR')
+DROP TRIGGER [dbo].[__TR_City__DELETE]
+GO
+
 --DROP ANY AUDIT TRIGGERS FOR [dbo].[State]
 if exists(select * from sysobjects where name = '__TR_State__INSERT' AND xtype = 'TR')
 DROP TRIGGER [dbo].[__TR_State__INSERT]

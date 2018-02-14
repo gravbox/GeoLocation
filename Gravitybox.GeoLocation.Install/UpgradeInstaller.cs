@@ -33,7 +33,7 @@ namespace Gravitybox.GeoLocation.Install
         internal const string DEFAULT_NAMESPACE = "Gravitybox.GeoLocation.Install";
         internal const string MODELKEY = "792c16d4-9353-4f34-bf2b-4c66aa688643";
         private GeneratedVersion _previousVersion = null;
-        private static GeneratedVersion _upgradeToVersion = new GeneratedVersion(0, 0, 0, 3, 12);
+        private static GeneratedVersion _upgradeToVersion = new GeneratedVersion(0, 0, 0, 3, 15);
         private InstallSetup _setup = null;
         private System.Data.SqlClient.SqlConnection _connection;
         private System.Data.SqlClient.SqlTransaction _transaction;
@@ -90,12 +90,6 @@ namespace Gravitybox.GeoLocation.Install
             {
                 throw;
             }
-        }
-
-        public static void AzureCopyDatabase(InstallSettings settings)
-        {
-            var o = new AzureCopy();
-            o.Run(settings);
         }
 
         #region construct / initialize
@@ -1157,7 +1151,9 @@ namespace Gravitybox.GeoLocation.Install
                         throw;
                     }
                 }
-                return retval;
+
+                //Run in alpha order so the user can re-arrange if need be
+                return retval.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
             }
             catch
             {
@@ -1463,6 +1459,11 @@ namespace Gravitybox.GeoLocation.Install
             }
 
             #endregion
+
+            public override string ToString()
+            {
+                return this.FullName;
+            }
         }
 
         #endregion
@@ -1997,7 +1998,7 @@ namespace Gravitybox.GeoLocation.Install
         /// <summary />
         public static byte[] ComputeHashFromFile(string fileName)
         {
-            using (Stream stream = File.OpenRead(fileName))
+            using (var stream = File.OpenRead(fileName))
             {
                 return ComputeHash(stream);
             }
@@ -2051,8 +2052,8 @@ namespace Gravitybox.GeoLocation.Install
         /// <summary />
         internal static byte[] ComputeHashFinalBlock(byte[] input, int ibStart, int cbSize, ABCDStruct ABCD, Int64 len)
         {
-            byte[] working = new byte[64];
-            byte[] length = BitConverter.GetBytes(len);
+            var working = new byte[64];
+            var length = BitConverter.GetBytes(len);
 
             //Padding is a single bit 1, followed by the number of 0s required to make size congruent to 448 modulo 512. Step 1 of RFC 1321  
             //The CLR ensures that our buffer is 0-assigned, we don't need to explicitly set it. This is why it ends up being quicker to just

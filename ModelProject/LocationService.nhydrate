@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<nHydrateModel dslVersion="6.0.0.205" Id="792c16d4-9353-4f34-bf2b-4c66aa688643" companyName="Gravitybox" projectName="GeoLocation" version="0.0.0.3" timestampColumnName="TimeStamp" modelVersion="5.1.2.115" useGeneratedCRUD="false" diagramVisibility="Function, StoredProcedure, View">
+<nHydrateModel dslVersion="6.0.0.210" Id="792c16d4-9353-4f34-bf2b-4c66aa688643" companyName="Gravitybox" projectName="GeoLocation" version="0.0.0.3" timestampColumnName="TimeStamp" modelVersion="5.1.2.115" useGeneratedCRUD="false" diagramVisibility="Function, StoredProcedure, View">
   <entities>
     <entity Id="82c6a2d7-716d-43e6-8370-1a95cfe6e486" name="Zip" copyStateInfo="">
       <fields>
@@ -112,6 +112,42 @@
             <indexColumns>
               <indexHasIndexColumns Id="288bcf63-7665-4e2f-836b-1f5d46b09037">
                 <indexColumn Id="cf2a0bce-65b4-4654-aab3-d4b44cbd5f70" fieldID="c5e385e3-6d94-4909-8ab5-83ca667ef383" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+      </indexes>
+    </entity>
+    <entity Id="a83e4047-684c-4b9b-9934-27b212d0a00f" name="City" copyStateInfo="">
+      <fields>
+        <entityHasFields Id="ff3e619e-4c50-46ba-abd7-c657c90690eb">
+          <field Id="901b1c9b-6c15-4bd1-9a60-6d790f7beb3e" name="CityId" nullable="false" dataType="Int" identity="Database" isIndexed="true" isUnique="true" length="4" min="NaN" max="NaN" isPrimaryKey="true" scale="0" sortOrder="1" />
+        </entityHasFields>
+        <entityHasFields Id="0b16437f-b30b-4e15-8a44-c02f7f4909f0">
+          <field Id="15ec555a-d705-4cc0-a462-d3541fb55af9" name="Name" length="100" min="NaN" max="NaN" scale="0" sortOrder="2" />
+        </entityHasFields>
+        <entityHasFields Id="df4317c5-690f-4956-9fa6-c8e9432da983">
+          <field Id="0c7d7fe9-afa1-4836-92da-2ccc78624b5f" name="State" isIndexed="true" min="NaN" max="NaN" scale="0" sortOrder="3" />
+        </entityHasFields>
+        <entityHasFields Id="a423f3ff-691c-4be8-931a-67f126ad885b">
+          <field Id="7b662179-7251-4690-80ae-3b82740a5ac7" name="Population" dataType="Int" length="4" min="NaN" max="NaN" scale="0" sortOrder="4" />
+        </entityHasFields>
+      </fields>
+      <indexes>
+        <entityHasIndexes Id="4bd133ea-98f7-4b7d-9517-9e085111e6e2">
+          <index Id="2698f9e1-291b-4ae9-9709-7203fcb67112" parentEntityID="a83e4047-684c-4b9b-9934-27b212d0a00f" isUnique="true" indexType="PrimaryKey" clustered="true">
+            <indexColumns>
+              <indexHasIndexColumns Id="ab8c952a-403a-43e4-a6fa-c902b0733104">
+                <indexColumn Id="d49d8bce-b031-4786-bed1-9adeb17048fd" fieldID="901b1c9b-6c15-4bd1-9a60-6d790f7beb3e" sortOrder="1" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+        <entityHasIndexes Id="4273da7f-4b07-483a-8f85-f7b8f64579ca">
+          <index Id="8d4e3ad8-5951-4134-b438-373008d7a9ff" parentEntityID="a83e4047-684c-4b9b-9934-27b212d0a00f" indexType="IsIndexed">
+            <indexColumns>
+              <indexHasIndexColumns Id="9c3ea9e9-3de2-4fcc-ba0b-45b1520a5037">
+                <indexColumn Id="5182fd01-dd8e-4f28-a6f0-21fe3c261724" fieldID="0c7d7fe9-afa1-4836-92da-2ccc78624b5f" sortOrder="1" />
               </indexHasIndexColumns>
             </indexColumns>
           </index>

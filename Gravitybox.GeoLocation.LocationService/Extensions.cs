@@ -27,15 +27,19 @@ namespace Gravitybox.GeoLocation.LocationService
                 City = zip.City,
                 State = zip.State,
             };
-
             if (zip.Latitude != null && zip.Longitude != null)
             {
                 retval.Latitude = zip.Latitude.Value;
                 retval.Longitude = zip.Longitude.Value;
             }
-
             return retval;
+        }
 
+        public static int ToInt32(this string v)
+        {
+            if (v == null) return 0;
+            int.TryParse(v, out int r);
+            return r;
         }
 
     }

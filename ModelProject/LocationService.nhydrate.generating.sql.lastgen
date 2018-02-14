@@ -10,6 +10,9 @@
 								<c key="53d912d3-d058-43f8-892a-6294acd74ce4" name="City" dataFieldSortOrder="1" isIndexed="1" id="1889006713" type="22" allowNull="0">
 										<pt key="82c6a2d7-716d-43e6-8370-1a95cfe6e486" ref="1149622279" refType="1" />
 								</c>
+								<c key="901b1c9b-6c15-4bd1-9a60-6d790f7beb3e" primaryKey="1" identity="1" name="CityId" dataFieldSortOrder="1" isIndexed="1" isUnique="1" id="13368472" type="8" allowNull="0">
+										<pt key="a83e4047-684c-4b9b-9934-27b212d0a00f" ref="693660960" refType="1" />
+								</c>
 								<c key="6eebc5a4-9dc6-4e86-8224-e859994bf4e8" name="Description" dataFieldSortOrder="2" length="1000" id="1586387724" type="22">
 										<pt key="6e7b17aa-6c16-4dee-a779-259ad212b0de" ref="912383123" refType="1" />
 								</c>
@@ -25,11 +28,20 @@
 								<c key="c5e385e3-6d94-4909-8ab5-83ca667ef383" name="Name" dataFieldSortOrder="3" length="128" isIndexed="1" id="642865229" type="22" allowNull="0">
 										<pt key="6e7b17aa-6c16-4dee-a779-259ad212b0de" ref="912383123" refType="1" />
 								</c>
+								<c key="15ec555a-d705-4cc0-a462-d3541fb55af9" name="Name" dataFieldSortOrder="2" length="100" id="938675633" type="22">
+										<pt key="a83e4047-684c-4b9b-9934-27b212d0a00f" ref="693660960" refType="1" />
+								</c>
 								<c key="29e82b87-ca95-4881-aa1f-160144d6fe7f" name="Population" dataFieldSortOrder="7" isIndexed="1" id="198341270" type="8">
 										<pt key="82c6a2d7-716d-43e6-8370-1a95cfe6e486" ref="1149622279" refType="1" />
 								</c>
+								<c key="7b662179-7251-4690-80ae-3b82740a5ac7" name="Population" dataFieldSortOrder="4" id="1434842212" type="8">
+										<pt key="a83e4047-684c-4b9b-9934-27b212d0a00f" ref="693660960" refType="1" />
+								</c>
 								<c key="10527e9b-46b6-4f2f-b301-394fe9c4cc20" name="State" dataFieldSortOrder="5" isIndexed="1" id="1015324958" type="22" allowNull="0">
 										<pt key="82c6a2d7-716d-43e6-8370-1a95cfe6e486" ref="1149622279" refType="1" />
+								</c>
+								<c key="0c7d7fe9-afa1-4836-92da-2ccc78624b5f" name="State" dataFieldSortOrder="3" isIndexed="1" id="227627843" type="22">
+										<pt key="a83e4047-684c-4b9b-9934-27b212d0a00f" ref="693660960" refType="1" />
 								</c>
 								<c key="1e7c5a0e-bba8-4b9c-8676-8341e3588ab9" primaryKey="1" identity="1" name="StateId" dataFieldSortOrder="4" isIndexed="1" isUnique="1" id="914822499" type="8" allowNull="0">
 										<pt key="6e7b17aa-6c16-4dee-a779-259ad212b0de" ref="912383123" refType="1" />
@@ -48,6 +60,29 @@
 						<relations key="00000000-0000-0000-0000-000000000000" />
 						<viewrelations key="00000000-0000-0000-0000-000000000000" />
 						<tables key="00000000-0000-0000-0000-000000000000">
+								<t key="a83e4047-684c-4b9b-9934-27b212d0a00f" name="City" dbschema="" id="693660960">
+										<til>
+												<ti key="2698f9e1-291b-4ae9-9709-7203fcb67112" isUnique="1" primaryKey="1" clustered="1" description="" importedName="" id="930419509">
+														<ticl>
+																<tic ascending="1" fieldID="901b1c9b-6c15-4bd1-9a60-6d790f7beb3e" id="1" />
+														</ticl>
+												</ti>
+												<ti key="8d4e3ad8-5951-4134-b438-373008d7a9ff" isUnique="0" primaryKey="0" clustered="0" description="" importedName="" id="1778020883">
+														<ticl>
+																<tic ascending="1" fieldID="0c7d7fe9-afa1-4836-92da-2ccc78624b5f" id="1" />
+														</ticl>
+												</ti>
+										</til>
+										<c key="00000000-0000-0000-0000-000000000000">
+												<f key="901b1c9b-6c15-4bd1-9a60-6d790f7beb3e" ref="13368472" refType="0" />
+												<f key="15ec555a-d705-4cc0-a462-d3541fb55af9" ref="938675633" refType="0" />
+												<f key="0c7d7fe9-afa1-4836-92da-2ccc78624b5f" ref="227627843" refType="0" />
+												<f key="7b662179-7251-4690-80ae-3b82740a5ac7" ref="1434842212" refType="0" />
+										</c>
+										<security key="00000000-0000-0000-0000-000000000000" sql="">
+												<parameters key="00000000-0000-0000-0000-000000000000" />
+										</security>
+								</t>
 								<t key="6e7b17aa-6c16-4dee-a779-259ad212b0de" name="State" dbschema="" id="912383123">
 										<til>
 												<ti key="09cb07fe-204a-4ce4-8e57-522b515b63cb" isUnique="1" primaryKey="1" clustered="1" description="" importedName="" id="1821206588">
@@ -124,7 +159,7 @@
 						<customstoredprocedures key="00000000-0000-0000-0000-000000000000" />
 				</database>
 				<versionHistoryList>
-						<version createdDate="2017-11-30 10:04:38" version="0.0.0.3" />
+						<version createdDate="2018-02-14 13:47:49" version="0.0.0.3" />
 				</versionHistoryList>
 		</ModelRoot>
 </modelRoot>

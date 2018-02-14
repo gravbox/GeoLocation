@@ -30,6 +30,10 @@ namespace Gravitybox.GeoLocation.EFDAL
 	public enum EntityMappingConstants
 	{
 		/// <summary>
+		/// A mapping for the the City entity
+		/// </summary>
+		City,
+		/// <summary>
 		/// A mapping for the the State entity
 		/// </summary>
 		State,
@@ -76,7 +80,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 		private static Dictionary<string, SequentialIdGenerator> _sequentialIdGeneratorCache = new Dictionary<string, SequentialIdGenerator>();
 		private static object _seqCacheLock = new object();
 
-		private const string _version = "0.0.0.3.12";
+		private const string _version = "0.0.0.3.15";
 		private const string _modelKey = "792c16d4-9353-4f34-bf2b-4c66aa688643";
 
 		/// <summary />
@@ -240,11 +244,19 @@ namespace Gravitybox.GeoLocation.EFDAL
 			#endregion
 
 			#region Map Tables
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.City>().ToTable("City", "dbo");
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.State>().ToTable("State", "dbo");
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.Zip>().ToTable("Zip", "dbo");
 			#endregion
 
 			#region Setup Fields
+
+			//Field setup for City entity
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.City>().Property(d => d.CityId).IsRequired().HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.City>().Property(d => d.Name).IsOptional().HasMaxLength(100).HasColumnType("VARCHAR");
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.City>().Property(d => d.Population).IsOptional();
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.City>().Property(d => d.State).IsOptional().HasMaxLength(50).HasColumnType("VARCHAR");
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.City>().Property(d => d.TimeStamp).IsConcurrencyToken(true);
 
 			//Field setup for State entity
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.State>().Property(d => d.Abbr).IsRequired().HasMaxLength(2).HasColumnType("VARCHAR");
@@ -281,6 +293,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 
 			#region Primary Keys
 
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.City>().HasKey(x => new { x.CityId });
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.State>().HasKey(x => new { x.StateId });
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.Zip>().HasKey(x => new { x.ZipId });
 
@@ -344,13 +357,16 @@ namespace Gravitybox.GeoLocation.EFDAL
 				if (entity != null)
 				{
 					var audit = entity as IAuditableSet;
-					if (entity.IsModifyAuditImplemented && entity.ModifiedBy != this.ContextStartup.Modifer)
+					if (audit != null && entity.IsModifyAuditImplemented && entity.ModifiedBy != this.ContextStartup.Modifer)
 					{
 						if (audit != null) audit.ResetCreatedBy(this.ContextStartup.Modifer);
 						if (audit != null) audit.ResetModifiedBy(this.ContextStartup.Modifer);
 					}
-					audit.CreatedDate = markedTime;
-					audit.ModifiedDate = markedTime;
+					if (audit != null)
+					{
+						audit.CreatedDate = markedTime;
+						audit.ModifiedDate = markedTime;
+					}
 				}
 			}
 			this.OnBeforeSaveAddedEntity(new EventArguments.EntityListEventArgs { List = addedList });
@@ -413,6 +429,11 @@ namespace Gravitybox.GeoLocation.EFDAL
 		}
 
 		#region Entity Sets
+
+		/// <summary>
+		/// Entity set for City
+		/// </summary>
+		public virtual DbSet<Gravitybox.GeoLocation.EFDAL.Entity.City> City { get; set; }
 
 		/// <summary>
 		/// Entity set for State
@@ -504,38 +525,35 @@ namespace Gravitybox.GeoLocation.EFDAL
 		/// </summary>
 		public string GetDBVersion(string connectionString = null)
 		{
-			var conn = new System.Data.SqlClient.SqlConnection();
 			try
 			{
-				if (string.IsNullOrEmpty(connectionString))
-					connectionString = this.ConnectionString;
-				conn.ConnectionString = connectionString;
-				conn.Open();
-
-				var da = new SqlDataAdapter("select * from sys.tables where name = '__nhydrateschema'", conn);
-				var ds = new DataSet();
-				da.Fill(ds);
-				if (ds.Tables[0].Rows.Count > 0)
+				using (var conn = new System.Data.SqlClient.SqlConnection())
 				{
-					da = new SqlDataAdapter("SELECT * FROM [__nhydrateschema] where [ModelKey] = '" + this.ModelKey + "'", conn);
-					ds = new DataSet();
+					if (string.IsNullOrEmpty(connectionString))
+						connectionString = this.ConnectionString;
+					conn.ConnectionString = connectionString;
+					conn.Open();
+
+					var da = new SqlDataAdapter("select * from sys.tables where name = '__nhydrateschema'", conn);
+					var ds = new DataSet();
 					da.Fill(ds);
-					var t = ds.Tables[0];
-					if (t.Rows.Count > 0)
+					if (ds.Tables[0].Rows.Count > 0)
 					{
-						return (string) t.Rows[0]["dbVersion"];
+						da = new SqlDataAdapter("SELECT * FROM [__nhydrateschema] where [ModelKey] = '" + this.ModelKey + "'", conn);
+						ds = new DataSet();
+						da.Fill(ds);
+						var t = ds.Tables[0];
+						if (t.Rows.Count > 0)
+						{
+							return (string) t.Rows[0]["dbVersion"];
+						}
 					}
+					return string.Empty;
 				}
-				return string.Empty;
 			}
 			catch (Exception)
 			{
 				return string.Empty;
-			}
-			finally
-			{
-				if (conn != null)
-					conn.Close();
 			}
 		}
 
@@ -555,6 +573,10 @@ namespace Gravitybox.GeoLocation.EFDAL
 				audit.ModifiedBy = _contextStartup.Modifer;
 			}
 			if (false) { }
+			else if (entity is Gravitybox.GeoLocation.EFDAL.Entity.City)
+			{
+				this.City.Add((Gravitybox.GeoLocation.EFDAL.Entity.City)entity);
+			}
 			else if (entity is Gravitybox.GeoLocation.EFDAL.Entity.State)
 			{
 				this.State.Add((Gravitybox.GeoLocation.EFDAL.Entity.State)entity);
@@ -641,6 +663,12 @@ namespace Gravitybox.GeoLocation.EFDAL
 		#region IGeoLocation Members
 
 		/// <summary />
+		IQueryable<Gravitybox.GeoLocation.EFDAL.Entity.City> Gravitybox.GeoLocation.EFDAL.IGeoLocationEntities.City
+		{
+			get { return this.City.AsQueryable(); }
+		}
+
+		/// <summary />
 		IQueryable<Gravitybox.GeoLocation.EFDAL.Entity.State> Gravitybox.GeoLocation.EFDAL.IGeoLocationEntities.State
 		{
 			get { return this.State.AsQueryable(); }
@@ -682,6 +710,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 		/// </summary>
 		public static EntityMappingConstants GetEntityFromField(Enum field)
 		{
+			if (field is Gravitybox.GeoLocation.EFDAL.Entity.City.FieldNameConstants) return Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.City;
 			if (field is Gravitybox.GeoLocation.EFDAL.Entity.State.FieldNameConstants) return Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.State;
 			if (field is Gravitybox.GeoLocation.EFDAL.Entity.Zip.FieldNameConstants) return Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.Zip;
 			throw new Exception("Unknown field type!");
@@ -698,6 +727,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 		{
 			switch (table)
 			{
+				case Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.City: return new Gravitybox.GeoLocation.EFDAL.Entity.Metadata.CityMetadata();
 				case Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.State: return new Gravitybox.GeoLocation.EFDAL.Entity.Metadata.StateMetadata();
 				case Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.Zip: return new Gravitybox.GeoLocation.EFDAL.Entity.Metadata.ZipMetadata();
 			}
@@ -800,7 +830,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 			try
 			{
 				//If this is a tenant table then rig query plan for this specific tenant
-				if (command.CommandText.Contains("__vw_tenant_") || command.CommandText.Contains("__security"))
+				if (command.CommandText.Contains("__vw_tenant") || command.CommandText.Contains("__security"))
 				{
 					var builder = new SqlConnectionStringBuilder(command.Connection.ConnectionString);
 					command.CommandText = "--T:" + builder.UserID + "\r\n" + command.CommandText;

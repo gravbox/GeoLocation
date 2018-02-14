@@ -1,16 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Gravitybox.GeoLocation.Install
 {
-    static class Program
+    class Program
     {
-        [STAThread]
         static void Main(string[] args)
         {
+            //This class is added for convenience. If you wish to convert the installer to a console application
+            //set its output type to "Console Application" and startup object to this class
+
             System.Console.WriteLine("Starting Install...");
             var stateSaver = new Dictionary<object, object>();
             var installer = new DatabaseInstaller();

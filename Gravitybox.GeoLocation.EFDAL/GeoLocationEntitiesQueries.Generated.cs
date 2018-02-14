@@ -19,6 +19,77 @@ using Gravitybox.GeoLocation.EFDAL;
 
 namespace Gravitybox.GeoLocation.EFDAL
 {
+	#region CityQuery
+
+	/// <summary>
+	/// This is a helper object for running LINQ queries on the City collection.
+	/// </summary>
+	[Serializable]
+	[Table(Name = "City")]
+	[System.CodeDom.Compiler.GeneratedCode("nHydrateModelGenerator", "6.0.0")]
+	public partial class CityQuery : IBusinessObjectLINQQuery
+	{
+		#region Properties
+		/// <summary>
+		/// (Maps to the 'City.CityId' database field)
+		/// </summary>
+		[Column(Name = "CityId", DbType = "Int", CanBeNull = false, IsPrimaryKey = true)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual int CityId { get; set; }
+		/// <summary>
+		/// (Maps to the 'City.Name' database field)
+		/// </summary>
+		[Column(Name = "Name", DbType = "VarChar (100)", CanBeNull = true, IsPrimaryKey = false)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual string Name { get; set; }
+		/// <summary>
+		/// (Maps to the 'City.Population' database field)
+		/// </summary>
+		[Column(Name = "Population", DbType = "Int", CanBeNull = true, IsPrimaryKey = false)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual int? Population { get; set; }
+		/// <summary>
+		/// (Maps to the 'City.State' database field)
+		/// </summary>
+		[Column(Name = "State", DbType = "VarChar (50)", CanBeNull = true, IsPrimaryKey = false)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual string State { get; set; }
+		/// <summary>
+		/// The date of creation
+		/// </summary>
+		[Column(Name = "CreatedDate", DbType = "DateTime", CanBeNull = true)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual DateTime? CreatedDate { get; set; }
+		/// <summary>
+		/// The name of the creating entity
+		/// </summary>
+		[Column(Name = "CreatedBy", DbType = "VarChar(100)", CanBeNull = true)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual string CreatedBy { get; set; }
+		/// <summary>
+		/// The date of last modification
+		/// </summary>
+		[Column(Name = "ModifiedDate", DbType = "DateTime", CanBeNull = true)]
+		public virtual DateTime? ModifiedDate { get; set; }
+		/// <summary>
+		/// The name of the last modifing entity
+		/// </summary>
+		[Column(Name = "ModifiedBy", DbType = "VarChar(100)", CanBeNull = true)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual string ModifiedBy { get; set; }
+		/// <summary>
+		/// This is an internal field and is not to be used.
+		/// </summary>
+		[Column(Name = "TimeStamp", DbType = "Binary", CanBeNull = false)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual byte[] TimeStamp { get; set; }
+
+		#endregion
+
+	}
+
+	#endregion
+
 	#region StateQuery
 
 	/// <summary>
