@@ -178,6 +178,7 @@
     <EmbeddedResource Include="2_Upgrade Scripts\0000_0000_0000_0003_0013_UpgradeScript.sql" />
     <EmbeddedResource Include="2_Upgrade Scripts\0000_0000_0000_0003_0014_UpgradeScript.sql" />
     <EmbeddedResource Include="2_Upgrade Scripts\0000_0000_0000_0003_0015_UpgradeScript.sql" />
+    <EmbeddedResource Include="2_Upgrade Scripts\0000_0000_0000_0003_0016_UpgradeScript.sql" />
     <Content Include="2_Upgrade Scripts\ReadMe.txt" />
     <EmbeddedResource Include="3_GeneratedTablesAndData\1_CreateSchema.sql" />
     <EmbeddedResource Include="3_GeneratedTablesAndData\2_CreateData.sql" />

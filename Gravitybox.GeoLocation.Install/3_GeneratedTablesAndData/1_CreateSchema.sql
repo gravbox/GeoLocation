@@ -254,6 +254,16 @@ CREATE NONCLUSTERED INDEX [IDX_CITY_STATE] ON [dbo].[City] ([State] ASC)
 GO
 
 --DELETE INDEX
+if exists(select * from sys.indexes where name = 'IDX_CITY_NAME' and type_desc = 'CLUSTERED')
+DROP INDEX [IDX_CITY_NAME] ON [dbo].[City]
+GO
+
+--INDEX FOR TABLE [City] COLUMNS:[Name]
+if not exists(select * from sys.indexes where name = 'IDX_CITY_NAME') and exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'Name' and o.name = 'City')
+CREATE NONCLUSTERED INDEX [IDX_CITY_NAME] ON [dbo].[City] ([Name] ASC)
+GO
+
+--DELETE INDEX
 if exists(select * from sys.indexes where name = 'IDX_STATE_ABBR' and type_desc = 'CLUSTERED')
 DROP INDEX [IDX_STATE_ABBR] ON [dbo].[State]
 GO

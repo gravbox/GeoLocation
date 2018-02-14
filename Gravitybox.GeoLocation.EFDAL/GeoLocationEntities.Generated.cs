@@ -80,7 +80,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 		private static Dictionary<string, SequentialIdGenerator> _sequentialIdGeneratorCache = new Dictionary<string, SequentialIdGenerator>();
 		private static object _seqCacheLock = new object();
 
-		private const string _version = "0.0.0.3.15";
+		private const string _version = "0.0.0.3.16";
 		private const string _modelKey = "792c16d4-9353-4f34-bf2b-4c66aa688643";
 
 		/// <summary />

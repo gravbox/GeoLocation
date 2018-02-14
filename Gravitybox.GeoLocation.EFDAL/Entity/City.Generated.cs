@@ -130,10 +130,11 @@ namespace Gravitybox.GeoLocation.EFDAL.Entity
 		/// <summary>
 		/// The property that maps back to the database 'City.Name' field.
 		/// </summary>
-		/// <remarks>Field: [City].[Name], Field Length: 100, Nullable</remarks>
+		/// <remarks>Field: [City].[Name], Field Length: 100, Nullable, Indexed</remarks>
 		[DataMember]
 		[System.ComponentModel.Browsable(true)]
 		[System.ComponentModel.DisplayName("Name")]
+		[System.ComponentModel.DataAnnotations.Schema.Index()]
 		[System.Diagnostics.DebuggerNonUserCode()]
 		public virtual string Name
 		{

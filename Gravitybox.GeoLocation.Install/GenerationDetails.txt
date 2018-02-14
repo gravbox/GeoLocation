@@ -2,7 +2,7 @@ DO NOT MODIFY THIS FILE. IT IS ALWAYS OVERWRITTEN ON GENERATION.
 Generation Details
 
 Version 0.0.0.3
-Generated on 2018-02-14 13:47
+Generated on 2018-02-14 14:29
 Table Count: 3
 Tenant Table Count: 0
 View Count: 0
@@ -11,7 +11,7 @@ StoredProc Count: 0
 TABLE LIST
 City, ColumnCount=4, IsTenant=False
     Field: [City].[CityId], Not Nullable, Primary Key, AutoNumber, Unique, Indexed
-    Field: [City].[Name], Field Length: 100, Nullable
+    Field: [City].[Name], Field Length: 100, Nullable, Indexed
     Field: [City].[Population], Nullable
     Field: [City].[State], Field Length: 50, Nullable, Indexed
 State, ColumnCount=4, IsTenant=False

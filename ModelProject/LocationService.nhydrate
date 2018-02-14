@@ -124,7 +124,7 @@
           <field Id="901b1c9b-6c15-4bd1-9a60-6d790f7beb3e" name="CityId" nullable="false" dataType="Int" identity="Database" isIndexed="true" isUnique="true" length="4" min="NaN" max="NaN" isPrimaryKey="true" scale="0" sortOrder="1" />
         </entityHasFields>
         <entityHasFields Id="0b16437f-b30b-4e15-8a44-c02f7f4909f0">
-          <field Id="15ec555a-d705-4cc0-a462-d3541fb55af9" name="Name" length="100" min="NaN" max="NaN" scale="0" sortOrder="2" />
+          <field Id="15ec555a-d705-4cc0-a462-d3541fb55af9" name="Name" isIndexed="true" length="100" min="NaN" max="NaN" scale="0" sortOrder="2" />
         </entityHasFields>
         <entityHasFields Id="df4317c5-690f-4956-9fa6-c8e9432da983">
           <field Id="0c7d7fe9-afa1-4836-92da-2ccc78624b5f" name="State" isIndexed="true" min="NaN" max="NaN" scale="0" sortOrder="3" />
@@ -148,6 +148,15 @@
             <indexColumns>
               <indexHasIndexColumns Id="9c3ea9e9-3de2-4fcc-ba0b-45b1520a5037">
                 <indexColumn Id="5182fd01-dd8e-4f28-a6f0-21fe3c261724" fieldID="0c7d7fe9-afa1-4836-92da-2ccc78624b5f" sortOrder="1" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+        <entityHasIndexes Id="bf4b9b19-0551-47ec-baef-b86daaee6a8b">
+          <index Id="dae6adce-e581-4e6b-8866-27d239538ff8" parentEntityID="a83e4047-684c-4b9b-9934-27b212d0a00f" indexType="IsIndexed">
+            <indexColumns>
+              <indexHasIndexColumns Id="bffbc8b2-185b-4859-a9a4-3377fd96ef73">
+                <indexColumn Id="2811b7a6-75e4-4424-8e18-91279b6e0e45" fieldID="15ec555a-d705-4cc0-a462-d3541fb55af9" sortOrder="1" />
               </indexHasIndexColumns>
             </indexColumns>
           </index>

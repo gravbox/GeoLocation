@@ -5,7 +5,7 @@ namespace Gravitybox.GeoLocation.EFDAL.Entity
         /// <summary />
         public override string ToString()
         {
-            return this.Name;
+            return $"{this.City}, {this.State} {this.Name}";
         }
     }
 }

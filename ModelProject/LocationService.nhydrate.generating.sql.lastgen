@@ -28,7 +28,7 @@
 								<c key="c5e385e3-6d94-4909-8ab5-83ca667ef383" name="Name" dataFieldSortOrder="3" length="128" isIndexed="1" id="642865229" type="22" allowNull="0">
 										<pt key="6e7b17aa-6c16-4dee-a779-259ad212b0de" ref="912383123" refType="1" />
 								</c>
-								<c key="15ec555a-d705-4cc0-a462-d3541fb55af9" name="Name" dataFieldSortOrder="2" length="100" id="938675633" type="22">
+								<c key="15ec555a-d705-4cc0-a462-d3541fb55af9" name="Name" dataFieldSortOrder="2" length="100" isIndexed="1" id="938675633" type="22">
 										<pt key="a83e4047-684c-4b9b-9934-27b212d0a00f" ref="693660960" refType="1" />
 								</c>
 								<c key="29e82b87-ca95-4881-aa1f-160144d6fe7f" name="Population" dataFieldSortOrder="7" isIndexed="1" id="198341270" type="8">
@@ -70,6 +70,11 @@
 												<ti key="8d4e3ad8-5951-4134-b438-373008d7a9ff" isUnique="0" primaryKey="0" clustered="0" description="" importedName="" id="1778020883">
 														<ticl>
 																<tic ascending="1" fieldID="0c7d7fe9-afa1-4836-92da-2ccc78624b5f" id="1" />
+														</ticl>
+												</ti>
+												<ti key="dae6adce-e581-4e6b-8866-27d239538ff8" isUnique="0" primaryKey="0" clustered="0" description="" importedName="" id="12185222">
+														<ticl>
+																<tic ascending="1" fieldID="15ec555a-d705-4cc0-a462-d3541fb55af9" id="1" />
 														</ticl>
 												</ti>
 										</til>
@@ -159,7 +164,7 @@
 						<customstoredprocedures key="00000000-0000-0000-0000-000000000000" />
 				</database>
 				<versionHistoryList>
-						<version createdDate="2018-02-14 13:47:49" version="0.0.0.3" />
+						<version createdDate="2018-02-14 14:29:44" version="0.0.0.3" />
 				</versionHistoryList>
 		</ModelRoot>
 </modelRoot>

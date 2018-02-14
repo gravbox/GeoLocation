@@ -214,10 +214,10 @@ namespace Gravitybox.GeoLocation.LocationService
                             singleZip = zipItems.FirstOrDefault();
                         else //Look for specific city, state
                         {
-                            singleZip = zipItems.FirstOrDefault(x => x.City == cityValue && x.State == stateValue);
+                            singleZip = context.Zip.FirstOrDefault(x => x.City == cityValue && x.State == stateValue);
                             if (singleZip == null)
                             {
-                                singleZip = zipItems.FirstOrDefault(x => x.City.Contains(cityValue) && x.State == stateValue);
+                                singleZip = context.Zip.FirstOrDefault(x => x.City.Contains(cityValue) && x.State == stateValue);
                             }
                         }
 
@@ -235,40 +235,71 @@ namespace Gravitybox.GeoLocation.LocationService
                                 stateValue = state.Abbr;
 
                             //If (city AND state) match OR (city and ZIP) match OR (city, state zip)
-                            retval.AddRange(
-                                context.Zip
-                                .Where(x =>
-                                    (x.City.Contains(cityValue) && (x.State.Contains(stateValue))) ||
-                                    (x.City.Contains(cityValue) && (x.Name.Contains(stateValue))))  //state might be zip i.e. "Atlanta 30303"
-                                    .GroupBy(x => new { x.City, x.State })
-                                    .Select(x => new { x.Key.City, x.Key.State, Population = x.Sum(z => z.Population), Zip = x.Max(z => z.Name) })
+                            var list = (from z in context.Zip
+                                        join c in context.City on new { z.City, z.State } equals new { City = c.Name, c.State } into q
+                                        from c in q.DefaultIfEmpty()
+                                        where ((z.City.Contains(cityValue) && (z.State.Contains(stateValue))) ||
+                                                (z.City.Contains(cityValue) && (z.Name.Contains(stateValue))))
+                                        orderby c.Population descending
+                                        select new { z, c })
+                                    .ToList()
+                                    .Select(x => new EFDAL.Entity.Zip { City = x.z.City, State = x.z.State, Population = x.c?.Population }) //, Name = x.Name
+                                    .Distinct(new ZipComparer())
                                     .OrderByDescending(x => x.Population)
-                            .ToList()
-                            .Select(x => new EFDAL.Entity.Zip { City = x.City, State = x.State, Population = x.Population })
-                            .Distinct()
-                            .Take(50)
-                            .ToList()
-                            .OrderByDescending(x => x.Population)
-                            .ToList());
+                                    .Take(50)
+                                    .ToList();
+
+                            //    .Join(context.City, a => a.State, b => b.Name, (a, b) => a)
+                            //    .Where(x =>
+                            //        (x.City.Contains(cityValue) && (x.State.Contains(stateValue))) ||
+                            //        (x.City.Contains(cityValue) && (x.Name.Contains(stateValue))))  //state might be zip i.e. "Atlanta 30303"
+                            //        .GroupBy(x => new { x.City, x.State })
+                            //        .Select(x => new { x.Key.City, x.Key.State, Population = x.Sum(z => z.Population), Zip = x.Max(z => z.Name) })
+                            //        .OrderByDescending(x => x.Population)
+                            //.ToList()
+                            //.Select(x => new EFDAL.Entity.Zip { City = x.City, State = x.State, Population = x.Population })
+                            //.Distinct()
+                            //.Take(50)
+                            //.ToList()
+                            //.OrderByDescending(x => x.Population)
+                            //.ToList();
+
+
+                            retval.AddRange(list);
                         }
                         Logger.LogInfo($"GetLookup: Path2, Count={retval.Count}");
                     }
                     else
                     {
                         //Group by city/state and sum population so can order by largest overall population, not individual zip code
-                        retval.AddRange(
-                            context.Zip
-                            .Where(x => x.City.Contains(term) || x.Name.Contains(term) || x.State.Contains(term))
-                                .GroupBy(x => new { x.City, x.State })
-                                .Select(x => new { x.Key.City, x.Key.State, Population = x.Sum(z => z.Population), Zip = x.Max(z => z.Name) })
+
+                        var list = (from z in context.Zip
+                                    join c in context.City on new { z.City, z.State } equals new { City = c.Name, c.State } into q
+                                    from c in q.DefaultIfEmpty()
+                                    where (z.City.Contains(term) || z.Name.Contains(term) || z.State.Contains(term))
+                                    orderby c.Population descending
+                                    select new { z, c })
+                                .ToList()
+                                .Select(x => new EFDAL.Entity.Zip { City = x.z.City, State = x.z.State, Population = x.c?.Population }) //, Name = x.Name
                                 .OrderByDescending(x => x.Population)
-                        .ToList()
-                        .Select(x => new EFDAL.Entity.Zip { City = x.City, State = x.State, Population = x.Population })
-                        .Distinct()
-                        .Take(50)
-                        .ToList()
-                        .OrderByDescending(x => x.Population)
-                        .ToList());
+                                .Distinct(new ZipComparer())                                
+                                .Take(50)
+                                .ToList();
+
+
+                        //    .Where(x => x.City.Contains(term) || x.Name.Contains(term) || x.State.Contains(term))
+                        //        .GroupBy(x => new { x.City, x.State })
+                        //        .Select(x => new { x.Key.City, x.Key.State, Population = x.Sum(z => z.Population), Zip = x.Max(z => z.Name) })
+                        //        .OrderByDescending(x => x.Population)
+                        //.ToList()
+                        //.Select(x => new EFDAL.Entity.Zip { City = x.City, State = x.State, Population = x.Population })
+                        //.Distinct()
+                        //.Take(50)
+                        //.ToList()
+                        //.OrderByDescending(x => x.Population)
+                        //.ToList();
+
+                        retval.AddRange(list);
                         Logger.LogInfo($"GetLookup: Path3, Count={retval.Count}");
                     }
 
