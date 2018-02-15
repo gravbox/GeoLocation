@@ -184,7 +184,6 @@
     <EmbeddedResource Include="3_GeneratedTablesAndData\2_CreateData.sql" />
     <EmbeddedResource Include="3_GeneratedTablesAndData\4_CreateSchemaAuditTriggers.sql" />
     <EmbeddedResource Include="3_GeneratedTablesAndData\3_CreateRelations.sql" />
-    <EmbeddedResource Include="3_GeneratedTablesAndData\CreateData_1d_city.sql" />
     <Content Include="3_GeneratedTablesAndData\ReadMe.txt" />
     <Content Include="4_UserDefinedPostTablesAndData\Always\ReadMe.txt" />
     <Content Include="4_UserDefinedPostTablesAndData\NewDatabase\ReadMe.txt" />
@@ -200,6 +199,9 @@
     <Content Include="6_UserDefinedFinalize\ReadMe.txt" />
     <Content Include="6_UserDefinedFinalize\UnVersioned\ReadMe.txt" />
     <Content Include="6_UserDefinedFinalize\Versioned\ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="3_GeneratedTablesAndData\CreateData_1d_city.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
