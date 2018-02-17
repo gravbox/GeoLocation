@@ -243,27 +243,11 @@ namespace Gravitybox.GeoLocation.LocationService
                                         orderby c.Population descending
                                         select new { z, c })
                                     .ToList()
-                                    .Select(x => new EFDAL.Entity.Zip { City = x.z.City, State = x.z.State, Population = x.c?.Population }) //, Name = x.Name
+                                    .Select(x => new EFDAL.Entity.Zip { City = x.z.City, State = x.z.State, Population = x.c?.Population, Latitude = x.z.Latitude, Longitude = x.z.Longitude }) //, Name = x.Name
                                     .Distinct(new ZipComparer())
                                     .OrderByDescending(x => x.Population)
                                     .Take(50)
                                     .ToList();
-
-                            //    .Join(context.City, a => a.State, b => b.Name, (a, b) => a)
-                            //    .Where(x =>
-                            //        (x.City.Contains(cityValue) && (x.State.Contains(stateValue))) ||
-                            //        (x.City.Contains(cityValue) && (x.Name.Contains(stateValue))))  //state might be zip i.e. "Atlanta 30303"
-                            //        .GroupBy(x => new { x.City, x.State })
-                            //        .Select(x => new { x.Key.City, x.Key.State, Population = x.Sum(z => z.Population), Zip = x.Max(z => z.Name) })
-                            //        .OrderByDescending(x => x.Population)
-                            //.ToList()
-                            //.Select(x => new EFDAL.Entity.Zip { City = x.City, State = x.State, Population = x.Population })
-                            //.Distinct()
-                            //.Take(50)
-                            //.ToList()
-                            //.OrderByDescending(x => x.Population)
-                            //.ToList();
-
 
                             retval.AddRange(list);
                         }
@@ -280,24 +264,11 @@ namespace Gravitybox.GeoLocation.LocationService
                                     orderby c.Population descending
                                     select new { z, c })
                                 .ToList()
-                                .Select(x => new EFDAL.Entity.Zip { City = x.z.City, State = x.z.State, Population = x.c?.Population }) //, Name = x.Name
+                                .Select(x => new EFDAL.Entity.Zip { City = x.z.City, State = x.z.State, Population = x.c?.Population, Latitude = x.z.Latitude, Longitude = x.z.Longitude }) //, Name = x.Name
                                 .OrderByDescending(x => x.Population)
                                 .Distinct(new ZipComparer())                                
                                 .Take(50)
                                 .ToList();
-
-
-                        //    .Where(x => x.City.Contains(term) || x.Name.Contains(term) || x.State.Contains(term))
-                        //        .GroupBy(x => new { x.City, x.State })
-                        //        .Select(x => new { x.Key.City, x.Key.State, Population = x.Sum(z => z.Population), Zip = x.Max(z => z.Name) })
-                        //        .OrderByDescending(x => x.Population)
-                        //.ToList()
-                        //.Select(x => new EFDAL.Entity.Zip { City = x.City, State = x.State, Population = x.Population })
-                        //.Distinct()
-                        //.Take(50)
-                        //.ToList()
-                        //.OrderByDescending(x => x.Population)
-                        //.ToList();
 
                         retval.AddRange(list);
                         Logger.LogInfo($"GetLookup: Path3, Count={retval.Count}");

@@ -194,6 +194,7 @@
     <EmbeddedResource Include="5_Programmability\Stored Procedures\Internal\StoredProcedures.sql" />
     <Content Include="5_Programmability\Stored Procedures\User Defined\ReadMe.txt" />
     <Content Include="5_Programmability\Views\User Defined\ReadMe.txt" />
+    <EmbeddedResource Include="6_UserDefinedFinalize\Always\always.sql" />
     <Content Include="6_UserDefinedFinalize\Always\ReadMe.txt" />
     <Content Include="6_UserDefinedFinalize\NewDatabase\ReadMe.txt" />
     <Content Include="6_UserDefinedFinalize\ReadMe.txt" />
