@@ -25,7 +25,9 @@ namespace Gravitybox.GeoLocation.Interfaces
 
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(this.City) && !string.IsNullOrEmpty(this.State))
+            if (!string.IsNullOrEmpty(this.City) && !string.IsNullOrEmpty(this.State) && !string.IsNullOrEmpty(this.Name))
+                return $"{this.City}, {this.State} {this.Name}";
+            else if (!string.IsNullOrEmpty(this.City) && !string.IsNullOrEmpty(this.State))
                 return $"{this.City}, {this.State}";
             else if (!string.IsNullOrEmpty(this.City))
                 return $"{this.Name}";
