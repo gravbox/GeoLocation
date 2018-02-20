@@ -210,9 +210,19 @@ namespace Gravitybox.GeoLocation.LocationService
                             .ToList();
 
                         EFDAL.Entity.Zip singleZip = null;
-                        if (zipItems.Count == 1)
+
+                        //If there is a ZIP code included and not a single match
+                        //determine if can match city, state
+                        if (!string.IsNullOrEmpty(zipValue) && zipItems.Count > 1)
+                        {
+                            var lmabda = zipItems.Where(x => x.City.ToLower() == cityValue.ToLower());
+                            if (lmabda.Count() == 1)
+                                singleZip = lmabda.First();
+                        }
+
+                        if (singleZip == null && zipItems.Count == 1)
                             singleZip = zipItems.FirstOrDefault();
-                        else //Look for specific city, state
+                        else if (singleZip == null) //Look for specific city, state
                         {
                             singleZip = context.Zip.FirstOrDefault(x => x.City == cityValue && x.State == stateValue);
                             if (singleZip == null)
