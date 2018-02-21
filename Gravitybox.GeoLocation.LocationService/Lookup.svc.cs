@@ -159,7 +159,7 @@ namespace Gravitybox.GeoLocation.LocationService
 
         public List<string> GetLookup(string term)
         {
-            return Lookup(term).Select(x => x.City + ", " + x.State + " " + x.Name).ToList();
+            return Lookup(term).Select(x => (x.City + ", " + x.State + " " + x.Name).Trim()).ToList();
         }
 
         private List<EFDAL.Entity.Zip> Lookup(string term)

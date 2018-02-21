@@ -137,4 +137,11 @@ delete from zip where city like '%U of %'
 delete from zip where city like '%corpo%'
 delete from zip where city like '%for christ%'
 delete from zip where city like '%shops%'
+
+--delete from city where Name like '%(balance)%'
+--delete from city where Name like '%consolidated%'
+--delete from city where Name like '%government%'
+delete from city where Name like '%reservation'
+delete from city where Name like '%county%'
+
 GO
