@@ -17,39 +17,78 @@ namespace ModelProject
 
         private static void ResetPopulations()
         {
-            var index = 0;
-            var connectionString = @"server=.\SQL2014;initial catalog=GeoLocation;integrated security=SSPI;";
-            using (var context = new GeoLocationEntities(connectionString))
+            try
             {
-                var allZips = context.Zip.ToList();
-                using (var sr = new StreamReader(@"C:\Users\chrisd\Downloads\Zipcode-ZCTA-Population-Density-And-Area-Unsorted.csv"))
+                var index = 0;
+                var connectionString = @"server=.\SQL2014;initial catalog=GeoLocation;integrated security=SSPI;";
+                using (var context = new GeoLocationEntities(connectionString))
                 {
-                    using (var csv = new CsvReader(sr))
+                    var allZips = context.City.ToList();
+                    var states = context.State.ToList();
+                    var input = @"C:\temp\cities.csv";
+                    using (var sr = new StreamReader(input))
                     {
-                        while (csv.Read())
+                        using (var csv = new CsvReader(sr))
                         {
-                            var record = csv.GetRecord<ZipItem>();
-                            if (record.Population > 0)
+                            while (csv.Read())
                             {
-                                var dbZip = allZips.FirstOrDefault(x => x.Name == record.Zip);
-                                if (dbZip != null)
+                                var record = csv.GetRecord<CityItem>();
+                                var population = record.Population.ToInt();
+                                if (population > 0)
                                 {
-                                    Console.WriteLine($"Index={index}, Zip={record.Zip}, Population1={record.Population}, Population2={dbZip.Population}");
-                                    dbZip.Population = record.Population;
+                                    var state = states.Where(x => x.Name.Match(record.State)).Select(x => x.Abbr).FirstOrDefault();
+                                    var dbZip = allZips.FirstOrDefault(x => x.Name.Match(record.City) && x.State == state);
+                                    if (dbZip == null)
+                                    {
+                                        context.AddItem(new Gravitybox.GeoLocation.EFDAL.Entity.City { Name = record.City, Population = population, State = state });
+                                        Console.WriteLine($"Index={index}, Action=Add, City={record.City}, State={state}, Population={record.Population}");
+                                    }
+                                    else if (dbZip != null && dbZip.Population != population)
+                                    {
+                                        Console.WriteLine($"Index={index}, Action=Update, City={record.City}, State={state}, Population={record.Population}, Population2={dbZip.Population}");
+                                        dbZip.Population = population;
+                                    }
                                 }
+                                index++;
                             }
-                            index++;
                         }
                     }
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }
 
-    internal class ZipItem
+    internal class CityItem
     {
-        public string Zip { get; set; }
-        public int Population { get; set; }
+        public int ID { get; set; }
+        public string State { get; set; }
+        public string City { get; set; }
+        public string Population { get; set; }
+    }
+
+    internal static class Extensions
+    {
+        public static int ToInt(this string v)
+        {
+            if (string.IsNullOrEmpty(v)) return 0;
+            v = v.Replace(",", string.Empty);
+            int parsed;
+            int.TryParse(v, out parsed);
+            return parsed;
+        }
+
+        public static bool Match(this string s, string str)
+        {
+            if (s == null && str == null) return true;
+            if (s != null && str == null) return false;
+            if (s == null && str != null) return false;
+            return string.Equals(s, str, StringComparison.InvariantCultureIgnoreCase);
+        }
+
     }
 }
