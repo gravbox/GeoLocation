@@ -13,6 +13,103 @@ namespace ModelProject
         static void Main(string[] args)
         {
             //ResetPopulations();
+            //CleanCity();
+            //DumpSQL();
+        }
+
+        private static void DumpSQL()
+        {
+            try
+            {
+                var connectionString = @"server=.\SQL2014;initial catalog=GeoLocation;integrated security=SSPI;";
+                using (var context = new GeoLocationEntities(connectionString))
+                {
+                    var allZips = context.City.OrderBy(x => x.Name).ThenBy(x => x.State).ToList();
+                    var sb  = new StringBuilder();
+                    foreach(var item in allZips)
+                    {
+                        sb.AppendLine($"INSERT INTO [City]([Name],[State],[Population]) VALUES ('{item.Name.Replace("'","''")}','{item.State}',{item.Population});");
+                    }
+                    File.WriteAllText(@"c:\temp\city-gen.sql", sb.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        private static void CleanCity()
+        {
+            try
+            {
+                var index = 0;
+                var connectionString = @"server=.\SQL2014;initial catalog=GeoLocation;integrated security=SSPI;";
+                using (var context = new GeoLocationEntities(connectionString))
+                {
+                    var allZips = context.City.ToList();
+
+                    //Set to largest population
+                    Dictionary<string, int> _cache = new Dictionary<string, int>();
+                    foreach (var item in allZips)
+                    {
+                        var key = (item.Name + "|" + item.State).ToLower();
+                        if (!_cache.ContainsKey(key))
+                        {
+                            _cache.Add(key, item.Population ?? 0);
+                        }
+
+                        var newPopulation = item.Population ?? 0;
+                        if (_cache[key] < newPopulation)
+                            _cache[key] = newPopulation;
+
+                        index++;
+                        Console.WriteLine($"Loop 1: Index={index}, Count={allZips.Count}");
+                    }
+
+                    index = 0;
+                    //Reset the populations
+                    foreach (var item in allZips)
+                    {
+                        var key = (item.Name + "|" + item.State).ToLower();
+                        item.Population = _cache[key];
+                        index++;
+                        Console.WriteLine($"Loop 2: Index={index}, Count={allZips.Count}");
+                    }
+                    context.SaveChanges();
+                    allZips = context.City.ToList();
+
+                    //Delete duplicates
+                    index = 0;
+                    var dups = new HashSet<int>();
+                    _cache = new Dictionary<string, int>();
+                    foreach (var item in allZips)
+                    {
+                        var key = (item.Name + "|" + item.State).ToLower();
+                        if (_cache.ContainsKey(key))
+                            dups.Add(item.CityId);
+                        else
+                            _cache.Add(key, 0);
+                        index++;
+                        Console.WriteLine($"Loop 3: Index={index}, Count={allZips.Count}");
+                    }
+
+                    index = 0;
+                    foreach (var key in dups)
+                    {
+                        context.City.Where(x => x.CityId == key).Delete();
+                        context.SaveChanges();
+                        Console.WriteLine($"Loop 4: Index={index}, Count={dups.Count}");
+                    }
+
+                    Console.WriteLine("Done");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         private static void ResetPopulations()
