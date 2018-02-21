@@ -1,0 +1,1 @@
+select 'INSERT INTO [City](Name,State,Population) VALUES ('''+[Name]+''','''+[State]+''','+cast([Population] as varchar(1000))+');' from [City]

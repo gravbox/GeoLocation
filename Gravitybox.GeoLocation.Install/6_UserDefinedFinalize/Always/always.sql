@@ -104,6 +104,7 @@ delete from ZIP where City like '% mail %'
 
 delete from ZIP where City like '%Balance of%'
 delete from city where name like '%Balance of%'
+delete from city where name like '%(pt.)%'
 delete from ZIP where City like '%Mortgage%'
 
 delete from zip where city like '%Commercial%'

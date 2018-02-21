@@ -169,6 +169,7 @@
     <Content Include="1_UserDefinedInitialization\NewDatabase\ReadMe.txt" />
     <Content Include="1_UserDefinedInitialization\ReadMe.txt" />
     <Content Include="1_UserDefinedInitialization\UnVersioned\ReadMe.txt" />
+    <Content Include="Debug\test.sql" />
     <EmbeddedResource Include="GenerationDetails.txt" />
     <EmbeddedResource Include="1_UserDefinedInitialization\UnVersioned\UnversionedUpgradeScript.sql" />
     <Content Include="1_UserDefinedInitialization\Versioned\ReadMe.txt" />
@@ -203,6 +204,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="3_GeneratedTablesAndData\CreateData_1d_city.zip" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Debug\cities.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
