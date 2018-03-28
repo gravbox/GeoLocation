@@ -239,6 +239,26 @@ namespace Gravitybox.GeoLocation.LocationService
                                 singleZip = lmabda.First();
                         }
 
+                        //If the "state" value is 6 chars, check if it is Canadian
+                        //Check Canada postal code
+                        //If found one then return it
+                        var cpostTerm2 = stateValue.Replace(" ", string.Empty);
+                        if (cpostTerm2.Length == 6)
+                        {
+                            var cpost = context.CanadaPostalCode.FirstOrDefault(x => x.PostalCode == cpostTerm2);
+                            if (cpost != null && (string.IsNullOrEmpty(cityValue) || cityValue.ToLower() == cpost.City.ToLower()))
+                            {
+                                retval.Add(new EFDAL.Entity.Zip
+                                {
+                                    City = cpost.City,
+                                    Latitude = cpost.Latitude,
+                                    Longitude = cpost.Longitude,
+                                    Name = cpost.PostalCode,
+                                });
+                                return retval;
+                            }
+                        }
+
                         if (singleZip == null && zipItems.Count == 1)
                             singleZip = zipItems.FirstOrDefault();
                         else if (singleZip == null) //Look for specific city, state

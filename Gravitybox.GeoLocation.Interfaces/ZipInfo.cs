@@ -29,6 +29,8 @@ namespace Gravitybox.GeoLocation.Interfaces
                 return $"{this.City}, {this.State} {this.Name}";
             else if (!string.IsNullOrEmpty(this.City) && !string.IsNullOrEmpty(this.State))
                 return $"{this.City}, {this.State}";
+            else if (!string.IsNullOrEmpty(this.City) && !string.IsNullOrEmpty(this.Name))
+                return $"{this.City}, {this.Name}";
             else if (!string.IsNullOrEmpty(this.City))
                 return $"{this.Name}";
             else
