@@ -32,6 +32,9 @@ namespace Gravitybox.GeoLocation.EFDAL
 		int SaveChanges();
 
 		/// <summary />
+		IQueryable<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode> CanadaPostalCode { get ; }
+
+		/// <summary />
 		IQueryable<Gravitybox.GeoLocation.EFDAL.Entity.City> City { get ; }
 
 		/// <summary />

@@ -60,6 +60,10 @@
     <Compile Include="ContextStartup.Generated.cs">
       <DependentUpon>ContextStartup.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entity\CanadaPostalCode.cs" />
+    <Compile Include="Entity\CanadaPostalCode.Generated.cs">
+      <DependentUpon>CanadaPostalCode.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entity\City.cs" />
     <Compile Include="Entity\City.Generated.cs">
       <DependentUpon>City.cs</DependentUpon>

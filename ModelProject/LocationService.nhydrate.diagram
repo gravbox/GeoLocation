@@ -20,5 +20,11 @@
         <elementListCompartment Id="720c39a4-ad03-4add-a526-24888a8e13a6" absoluteBounds="7.765, 1.685, 2.5949999999999998, 1.0185953776041665" name="EntityFieldCompartment" />
       </nestedChildShapes>
     </entityShape>
+    <entityShape Id="e3358f08-a6fa-40ef-b052-ce57e400cadc" absoluteBounds="4.625, 4.25, 3.25, 1.6208968098958323" fillColor="0, 122, 204" textColor="White" outlineColor="Gray" outlineDashStyle="Solid">
+      <entityMoniker name="/792c16d4-9353-4f34-bf2b-4c66aa688643/CanadaPostalCode" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b75d0f3f-6dae-4267-b0ba-725c89a2d81d" absoluteBounds="4.64, 4.56, 3.2199999999999998, 1.2108968098958333" name="EntityFieldCompartment" />
+      </nestedChildShapes>
+    </entityShape>
   </nestedChildShapes>
 </nHydrateDiagram>

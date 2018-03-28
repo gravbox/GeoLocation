@@ -2,13 +2,19 @@ DO NOT MODIFY THIS FILE. IT IS ALWAYS OVERWRITTEN ON GENERATION.
 Generation Details
 
 Version 0.0.0.3
-Generated on 2018-02-14 14:29
-Table Count: 3
+Generated on 2018-03-28 16:44
+Table Count: 4
 Tenant Table Count: 0
 View Count: 0
 StoredProc Count: 0
 
 TABLE LIST
+CanadaPostalCode, ColumnCount=5, IsTenant=False
+    Field: [CanadaPostalCode].[City], Field Length: 100, Not Nullable, Indexed
+    Field: [CanadaPostalCode].[Latitude], Nullable
+    Field: [CanadaPostalCode].[Longitude], Nullable
+    Field: [CanadaPostalCode].[PostalCode], Field Length: 10, Not Nullable, Indexed
+    Field: [CanadaPostalCode].[RowId], Not Nullable, Primary Key, AutoNumber, Unique, Indexed
 City, ColumnCount=4, IsTenant=False
     Field: [City].[CityId], Not Nullable, Primary Key, AutoNumber, Unique, Indexed
     Field: [City].[Name], Field Length: 100, Nullable, Indexed

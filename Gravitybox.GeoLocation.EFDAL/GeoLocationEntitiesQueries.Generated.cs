@@ -19,6 +19,54 @@ using Gravitybox.GeoLocation.EFDAL;
 
 namespace Gravitybox.GeoLocation.EFDAL
 {
+	#region CanadaPostalCodeQuery
+
+	/// <summary>
+	/// This is a helper object for running LINQ queries on the CanadaPostalCode collection.
+	/// </summary>
+	[Serializable]
+	[Table(Name = "CanadaPostalCode")]
+	[System.CodeDom.Compiler.GeneratedCode("nHydrateModelGenerator", "6.0.0")]
+	public partial class CanadaPostalCodeQuery : IBusinessObjectLINQQuery
+	{
+		#region Properties
+		/// <summary>
+		/// (Maps to the 'CanadaPostalCode.City' database field)
+		/// </summary>
+		[Column(Name = "City", DbType = "VarChar (100)", CanBeNull = false, IsPrimaryKey = false)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual string City { get; set; }
+		/// <summary>
+		/// (Maps to the 'CanadaPostalCode.Latitude' database field)
+		/// </summary>
+		[Column(Name = "Latitude", DbType = "Float", CanBeNull = true, IsPrimaryKey = false)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual double? Latitude { get; set; }
+		/// <summary>
+		/// (Maps to the 'CanadaPostalCode.Longitude' database field)
+		/// </summary>
+		[Column(Name = "Longitude", DbType = "Float", CanBeNull = true, IsPrimaryKey = false)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual double? Longitude { get; set; }
+		/// <summary>
+		/// (Maps to the 'CanadaPostalCode.PostalCode' database field)
+		/// </summary>
+		[Column(Name = "PostalCode", DbType = "VarChar (10)", CanBeNull = false, IsPrimaryKey = false)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual string PostalCode { get; set; }
+		/// <summary>
+		/// (Maps to the 'CanadaPostalCode.RowId' database field)
+		/// </summary>
+		[Column(Name = "RowId", DbType = "Int", CanBeNull = false, IsPrimaryKey = true)]
+		[System.Diagnostics.DebuggerNonUserCode()]
+		public virtual int RowId { get; set; }
+
+		#endregion
+
+	}
+
+	#endregion
+
 	#region CityQuery
 
 	/// <summary>

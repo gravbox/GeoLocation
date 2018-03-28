@@ -163,5 +163,53 @@
         </entityHasIndexes>
       </indexes>
     </entity>
+    <entity Id="c4ad47c8-92a5-4b63-bbfe-5a2c25b5ea85" name="CanadaPostalCode" allowCreateAudit="false" allowModifyAudit="false" allowTimestamp="false" copyStateInfo="">
+      <fields>
+        <entityHasFields Id="bbf7e4a0-6f18-4a8b-a6e3-5d9b9f6dfd0f">
+          <field Id="6379475f-99bd-4464-9aca-ea14b67bbe86" name="RowId" nullable="false" dataType="Int" identity="Database" isIndexed="true" isUnique="true" length="4" min="NaN" max="NaN" isPrimaryKey="true" scale="0" sortOrder="1" />
+        </entityHasFields>
+        <entityHasFields Id="e498b8fc-a745-427a-92d3-8a382296188c">
+          <field Id="6a22d44e-5bb6-4338-a5b7-f19d971a2aa6" name="PostalCode" nullable="false" isIndexed="true" length="10" min="NaN" max="NaN" scale="0" sortOrder="2" />
+        </entityHasFields>
+        <entityHasFields Id="18197e85-5c3b-4f09-a3c9-2753784623b6">
+          <field Id="e2d2ee9a-3405-43c9-a2d0-f3b43df82182" name="City" nullable="false" isIndexed="true" length="100" min="NaN" max="NaN" scale="0" sortOrder="3" />
+        </entityHasFields>
+        <entityHasFields Id="12535eb9-cb4d-42da-9390-f2321c2b2c8f">
+          <field Id="b5757c83-410b-43db-998e-551724d4e38b" name="Latitude" dataType="Float" length="8" min="NaN" max="NaN" scale="0" sortOrder="2" />
+        </entityHasFields>
+        <entityHasFields Id="762a9647-9acd-4998-8e0e-1b014c2c90a1">
+          <field Id="3029847e-23f3-481e-8aac-3e294a1fe34d" name="Longitude" dataType="Float" length="8" min="NaN" max="NaN" scale="0" sortOrder="3" />
+        </entityHasFields>
+      </fields>
+      <indexes>
+        <entityHasIndexes Id="5f5f2ab6-f5df-47d1-bcd0-d25cf2395eb8">
+          <index Id="96c03c83-87d3-47a5-948f-991d80de0d6a" parentEntityID="c4ad47c8-92a5-4b63-bbfe-5a2c25b5ea85" isUnique="true" indexType="PrimaryKey" clustered="true">
+            <indexColumns>
+              <indexHasIndexColumns Id="48b01103-b8da-4d5d-8457-aa217ddfaa63">
+                <indexColumn Id="798a1665-fed1-4a84-ac90-578631e47d48" fieldID="6379475f-99bd-4464-9aca-ea14b67bbe86" sortOrder="1" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+        <entityHasIndexes Id="4dbd2e05-8cc0-43aa-81b6-59136f960e2c">
+          <index Id="4fdd0c00-bd30-4d98-8181-e68db60221b5" parentEntityID="c4ad47c8-92a5-4b63-bbfe-5a2c25b5ea85" indexType="IsIndexed">
+            <indexColumns>
+              <indexHasIndexColumns Id="5f01bf3d-f158-487f-9090-8e36af8d9ce6">
+                <indexColumn Id="37d5f21f-100f-4c1a-be85-fa55555d7807" fieldID="6a22d44e-5bb6-4338-a5b7-f19d971a2aa6" sortOrder="1" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+        <entityHasIndexes Id="7d0f6528-2c2f-47b5-9e14-c83781f3cecd">
+          <index Id="6d2b1cc2-8ec4-4c5c-b7c6-380fe1449f98" parentEntityID="c4ad47c8-92a5-4b63-bbfe-5a2c25b5ea85" indexType="IsIndexed">
+            <indexColumns>
+              <indexHasIndexColumns Id="f18d80d5-90e3-4537-8e3f-06a528a31b88">
+                <indexColumn Id="db19d802-a867-49e9-a061-e870f97e328a" fieldID="e2d2ee9a-3405-43c9-a2d0-f3b43df82182" sortOrder="1" />
+              </indexHasIndexColumns>
+            </indexColumns>
+          </index>
+        </entityHasIndexes>
+      </indexes>
+    </entity>
   </entities>
 </nHydrateModel>

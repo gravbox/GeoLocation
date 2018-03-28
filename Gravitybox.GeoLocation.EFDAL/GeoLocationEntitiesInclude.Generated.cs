@@ -14,6 +14,20 @@ using Gravitybox.GeoLocation.EFDAL;
 
 namespace Gravitybox.GeoLocation.EFDAL
 {
+	#region CanadaPostalCodeInclude
+
+	/// <summary>
+	/// This is a helper object for creating LINQ definitions for context includes on the CanadaPostalCode collection.
+	/// </summary>
+	[Serializable]
+	[Table(Name = "CanadaPostalCode")]
+	[System.CodeDom.Compiler.GeneratedCode("nHydrateModelGenerator", "6.0.0")]
+	public partial class CanadaPostalCodeInclude : Gravitybox.GeoLocation.EFDAL.IContextInclude
+	{
+	}
+
+	#endregion
+
 	#region CityInclude
 
 	/// <summary>

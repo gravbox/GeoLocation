@@ -2,6 +2,19 @@
 
 --##SECTION BEGIN [INTERNAL STORED PROCS]
 
+--This SQL is generated for internal stored procedures for table [CanadaPostalCode]
+if exists(select * from sys.objects where name = 'gen_CanadaPostalCode_Delete' and type = 'P' and type_desc = 'SQL_STORED_PROCEDURE')
+	drop procedure [dbo].[gen_CanadaPostalCode_Delete]
+GO
+
+if exists(select * from sys.objects where name = 'gen_CanadaPostalCode_Insert' and type = 'P' and type_desc = 'SQL_STORED_PROCEDURE')
+	drop procedure [dbo].[gen_CanadaPostalCode_Insert]
+GO
+
+if exists(select * from sys.objects where name = 'gen_CanadaPostalCode_Update' and type = 'P' and type_desc = 'SQL_STORED_PROCEDURE')
+	drop procedure [dbo].[gen_CanadaPostalCode_Update]
+GO
+
 --This SQL is generated for internal stored procedures for table [City]
 if exists(select * from sys.objects where name = 'gen_City_Delete' and type = 'P' and type_desc = 'SQL_STORED_PROCEDURE')
 	drop procedure [dbo].[gen_City_Delete]

@@ -10,6 +10,9 @@
 								<c key="53d912d3-d058-43f8-892a-6294acd74ce4" name="City" dataFieldSortOrder="1" isIndexed="1" id="1889006713" type="22" allowNull="0">
 										<pt key="82c6a2d7-716d-43e6-8370-1a95cfe6e486" ref="1149622279" refType="1" />
 								</c>
+								<c key="e2d2ee9a-3405-43c9-a2d0-f3b43df82182" name="City" dataFieldSortOrder="3" length="100" isIndexed="1" id="442886370" type="22" allowNull="0">
+										<pt key="c4ad47c8-92a5-4b63-bbfe-5a2c25b5ea85" ref="65257990" refType="1" />
+								</c>
 								<c key="901b1c9b-6c15-4bd1-9a60-6d790f7beb3e" primaryKey="1" identity="1" name="CityId" dataFieldSortOrder="1" isIndexed="1" isUnique="1" id="13368472" type="8" allowNull="0">
 										<pt key="a83e4047-684c-4b9b-9934-27b212d0a00f" ref="693660960" refType="1" />
 								</c>
@@ -19,8 +22,14 @@
 								<c key="19f1d7eb-0833-430f-b693-d517ef9e6d83" name="Latitude" dataFieldSortOrder="2" id="62830699" type="6">
 										<pt key="82c6a2d7-716d-43e6-8370-1a95cfe6e486" ref="1149622279" refType="1" />
 								</c>
+								<c key="b5757c83-410b-43db-998e-551724d4e38b" name="Latitude" dataFieldSortOrder="2" id="138222711" type="6">
+										<pt key="c4ad47c8-92a5-4b63-bbfe-5a2c25b5ea85" ref="65257990" refType="1" />
+								</c>
 								<c key="d3c67466-2829-4710-b139-81baffdc17c8" name="Longitude" dataFieldSortOrder="3" id="757231687" type="6">
 										<pt key="82c6a2d7-716d-43e6-8370-1a95cfe6e486" ref="1149622279" refType="1" />
+								</c>
+								<c key="3029847e-23f3-481e-8aac-3e294a1fe34d" name="Longitude" dataFieldSortOrder="3" id="1381722567" type="6">
+										<pt key="c4ad47c8-92a5-4b63-bbfe-5a2c25b5ea85" ref="65257990" refType="1" />
 								</c>
 								<c key="d09215ea-40b2-4e31-b968-8f1898bec7bc" name="Name" dataFieldSortOrder="4" length="10" isIndexed="1" id="421902585" type="22" allowNull="0">
 										<pt key="82c6a2d7-716d-43e6-8370-1a95cfe6e486" ref="1149622279" refType="1" />
@@ -36,6 +45,12 @@
 								</c>
 								<c key="7b662179-7251-4690-80ae-3b82740a5ac7" name="Population" dataFieldSortOrder="4" id="1434842212" type="8">
 										<pt key="a83e4047-684c-4b9b-9934-27b212d0a00f" ref="693660960" refType="1" />
+								</c>
+								<c key="6a22d44e-5bb6-4338-a5b7-f19d971a2aa6" name="PostalCode" dataFieldSortOrder="2" length="10" isIndexed="1" id="1813580621" type="22" allowNull="0">
+										<pt key="c4ad47c8-92a5-4b63-bbfe-5a2c25b5ea85" ref="65257990" refType="1" />
+								</c>
+								<c key="6379475f-99bd-4464-9aca-ea14b67bbe86" primaryKey="1" identity="1" name="RowId" dataFieldSortOrder="1" isIndexed="1" isUnique="1" id="98627438" type="8" allowNull="0">
+										<pt key="c4ad47c8-92a5-4b63-bbfe-5a2c25b5ea85" ref="65257990" refType="1" />
 								</c>
 								<c key="10527e9b-46b6-4f2f-b301-394fe9c4cc20" name="State" dataFieldSortOrder="5" isIndexed="1" id="1015324958" type="22" allowNull="0">
 										<pt key="82c6a2d7-716d-43e6-8370-1a95cfe6e486" ref="1149622279" refType="1" />
@@ -60,6 +75,35 @@
 						<relations key="00000000-0000-0000-0000-000000000000" />
 						<viewrelations key="00000000-0000-0000-0000-000000000000" />
 						<tables key="00000000-0000-0000-0000-000000000000">
+								<t key="c4ad47c8-92a5-4b63-bbfe-5a2c25b5ea85" name="CanadaPostalCode" dbschema="" modifiedAudit="0" createAudit="0" timestamp="0" id="65257990">
+										<til>
+												<ti key="96c03c83-87d3-47a5-948f-991d80de0d6a" isUnique="1" primaryKey="1" clustered="1" description="" importedName="" id="700883146">
+														<ticl>
+																<tic ascending="1" fieldID="6379475f-99bd-4464-9aca-ea14b67bbe86" id="1" />
+														</ticl>
+												</ti>
+												<ti key="4fdd0c00-bd30-4d98-8181-e68db60221b5" isUnique="0" primaryKey="0" clustered="0" description="" importedName="" id="1810931391">
+														<ticl>
+																<tic ascending="1" fieldID="6a22d44e-5bb6-4338-a5b7-f19d971a2aa6" id="1" />
+														</ticl>
+												</ti>
+												<ti key="6d2b1cc2-8ec4-4c5c-b7c6-380fe1449f98" isUnique="0" primaryKey="0" clustered="0" description="" importedName="" id="1269349855">
+														<ticl>
+																<tic ascending="1" fieldID="e2d2ee9a-3405-43c9-a2d0-f3b43df82182" id="1" />
+														</ticl>
+												</ti>
+										</til>
+										<c key="00000000-0000-0000-0000-000000000000">
+												<f key="6379475f-99bd-4464-9aca-ea14b67bbe86" ref="98627438" refType="0" />
+												<f key="6a22d44e-5bb6-4338-a5b7-f19d971a2aa6" ref="1813580621" refType="0" />
+												<f key="b5757c83-410b-43db-998e-551724d4e38b" ref="138222711" refType="0" />
+												<f key="e2d2ee9a-3405-43c9-a2d0-f3b43df82182" ref="442886370" refType="0" />
+												<f key="3029847e-23f3-481e-8aac-3e294a1fe34d" ref="1381722567" refType="0" />
+										</c>
+										<security key="00000000-0000-0000-0000-000000000000" sql="">
+												<parameters key="00000000-0000-0000-0000-000000000000" />
+										</security>
+								</t>
 								<t key="a83e4047-684c-4b9b-9934-27b212d0a00f" name="City" dbschema="" id="693660960">
 										<til>
 												<ti key="2698f9e1-291b-4ae9-9709-7203fcb67112" isUnique="1" primaryKey="1" clustered="1" description="" importedName="" id="930419509">
@@ -164,7 +208,7 @@
 						<customstoredprocedures key="00000000-0000-0000-0000-000000000000" />
 				</database>
 				<versionHistoryList>
-						<version createdDate="2018-02-14 14:29:44" version="0.0.0.3" />
+						<version createdDate="2018-03-28 16:44:20" version="0.0.0.3" />
 				</versionHistoryList>
 		</ModelRoot>
 </modelRoot>

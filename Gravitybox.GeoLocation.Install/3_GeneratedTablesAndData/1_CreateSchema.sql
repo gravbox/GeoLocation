@@ -1,6 +1,22 @@
 --DO NOT MODIFY THIS FILE. IT IS ALWAYS OVERWRITTEN ON GENERATION.
 --Data Schema
 
+--CREATE TABLE [CanadaPostalCode]
+if not exists(select * from sysobjects where name = 'CanadaPostalCode' and xtype = 'U')
+CREATE TABLE [dbo].[CanadaPostalCode] (
+	[RowId] [Int] IDENTITY (1, 1) NOT NULL ,
+	[Latitude] [Float] NULL ,
+	[PostalCode] [VarChar] (10) NOT NULL ,
+	[City] [VarChar] (100) NOT NULL ,
+	[Longitude] [Float] NULL ,
+	CONSTRAINT [PK_CANADAPOSTALCODE] PRIMARY KEY CLUSTERED
+	(
+		[RowId]
+	)
+)
+
+GO
+
 --CREATE TABLE [City]
 if not exists(select * from sysobjects where name = 'City' and xtype = 'U')
 CREATE TABLE [dbo].[City] (
@@ -65,6 +81,18 @@ CREATE TABLE [dbo].[Zip] (
 GO
 
 --##SECTION BEGIN [FIELD CREATE]
+--TABLE [CanadaPostalCode] ADD FIELDS
+if exists(select * from sys.objects where name = 'CanadaPostalCode' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'RowId' and o.name = 'CanadaPostalCode')
+ALTER TABLE [dbo].[CanadaPostalCode] ADD [RowId] [Int] IDENTITY (1, 1) NOT NULL 
+if exists(select * from sys.objects where name = 'CanadaPostalCode' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'Latitude' and o.name = 'CanadaPostalCode')
+ALTER TABLE [dbo].[CanadaPostalCode] ADD [Latitude] [Float] NULL 
+if exists(select * from sys.objects where name = 'CanadaPostalCode' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'PostalCode' and o.name = 'CanadaPostalCode')
+ALTER TABLE [dbo].[CanadaPostalCode] ADD [PostalCode] [VarChar] (10) NOT NULL 
+if exists(select * from sys.objects where name = 'CanadaPostalCode' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'City' and o.name = 'CanadaPostalCode')
+ALTER TABLE [dbo].[CanadaPostalCode] ADD [City] [VarChar] (100) NOT NULL 
+if exists(select * from sys.objects where name = 'CanadaPostalCode' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'Longitude' and o.name = 'CanadaPostalCode')
+ALTER TABLE [dbo].[CanadaPostalCode] ADD [Longitude] [Float] NULL 
+GO
 --TABLE [City] ADD FIELDS
 if exists(select * from sys.objects where name = 'City' and type = 'U') AND not exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'CityId' and o.name = 'City')
 ALTER TABLE [dbo].[City] ADD [CityId] [Int] IDENTITY (1, 1) NOT NULL 
@@ -172,11 +200,39 @@ GO
 
 --##SECTION BEGIN [AUDIT TRAIL REMOVE]
 
+--REMOVE AUDIT TRAIL CREATE FOR TABLE [CanadaPostalCode]
+if exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'CreatedBy' and o.name = 'CanadaPostalCode')
+ALTER TABLE [dbo].[CanadaPostalCode] DROP COLUMN [CreatedBy]
+if exists (select * from sys.objects where name = 'DF__CANADAPOSTALCODE_CREATEDDATE' and [type] = 'D')
+ALTER TABLE [dbo].[CanadaPostalCode] DROP CONSTRAINT [DF__CANADAPOSTALCODE_CREATEDDATE]
+if exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'CreatedDate' and o.name = 'CanadaPostalCode')
+ALTER TABLE [dbo].[CanadaPostalCode] DROP COLUMN [CreatedDate]
+GO
+
+--REMOVE AUDIT TRAIL MODIFY FOR TABLE [CanadaPostalCode]
+if exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'ModifiedBy' and o.name = 'CanadaPostalCode')
+ALTER TABLE [dbo].[CanadaPostalCode] DROP COLUMN [ModifiedBy]
+if exists (select * from sys.objects where name = 'DF__CANADAPOSTALCODE_MODIFIEDDATE' and [type] = 'D')
+ALTER TABLE [dbo].[CanadaPostalCode] DROP CONSTRAINT [DF__CANADAPOSTALCODE_MODIFIEDDATE]
+if exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'ModifiedDate' and o.name = 'CanadaPostalCode')
+ALTER TABLE [dbo].[CanadaPostalCode] DROP COLUMN [ModifiedDate]
+GO
+
+--REMOVE AUDIT TRAIL TIMESTAMP FOR TABLE [CanadaPostalCode]
+if exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'TimeStamp' and o.name = 'CanadaPostalCode')
+ALTER TABLE [dbo].[CanadaPostalCode] DROP COLUMN [TimeStamp]
+GO
+
+GO
+
 --##SECTION END [AUDIT TRAIL REMOVE]
 
 --##SECTION BEGIN [RENAME PK]
 
 --RENAME EXISTING PRIMARY KEYS IF NECESSARY
+DECLARE @pkfixCanadaPostalCode varchar(500)
+SET @pkfixCanadaPostalCode = (SELECT top 1 i.name AS IndexName FROM sys.indexes AS i WHERE i.is_primary_key = 1 AND OBJECT_NAME(i.OBJECT_ID) = 'CanadaPostalCode')
+if @pkfixCanadaPostalCode <> '' and (BINARY_CHECKSUM(@pkfixCanadaPostalCode) <> BINARY_CHECKSUM('PK_CANADAPOSTALCODE')) exec('sp_rename '''+@pkfixCanadaPostalCode+''', ''PK_CANADAPOSTALCODE''')
 DECLARE @pkfixCity varchar(500)
 SET @pkfixCity = (SELECT top 1 i.name AS IndexName FROM sys.indexes AS i WHERE i.is_primary_key = 1 AND OBJECT_NAME(i.OBJECT_ID) = 'City')
 if @pkfixCity <> '' and (BINARY_CHECKSUM(@pkfixCity) <> BINARY_CHECKSUM('PK_CITY')) exec('sp_rename '''+@pkfixCity+''', ''PK_CITY''')
@@ -196,6 +252,14 @@ GO
 
 --##SECTION BEGIN [CREATE PK]
 
+--PRIMARY KEY FOR TABLE [CanadaPostalCode]
+if not exists(select * from sysobjects where name = 'PK_CANADAPOSTALCODE' and xtype = 'PK')
+ALTER TABLE [dbo].[CanadaPostalCode] WITH NOCHECK ADD 
+CONSTRAINT [PK_CANADAPOSTALCODE] PRIMARY KEY CLUSTERED
+(
+	[RowId]
+)
+GO
 --PRIMARY KEY FOR TABLE [City]
 if not exists(select * from sysobjects where name = 'PK_CITY' and xtype = 'PK')
 ALTER TABLE [dbo].[City] WITH NOCHECK ADD 
@@ -224,6 +288,11 @@ GO
 
 --##SECTION BEGIN [AUDIT TABLES PK]
 
+--DROP PRIMARY KEY FOR TABLE [__AUDIT__CANADAPOSTALCODE]
+if exists(select * from sys.objects where name = 'PK___AUDIT__CANADAPOSTALCODE' and type = 'PK' and type_desc = 'PRIMARY_KEY_CONSTRAINT')
+ALTER TABLE [dbo].[__AUDIT__CANADAPOSTALCODE] DROP CONSTRAINT [PK___AUDIT__CANADAPOSTALCODE]
+GO
+
 --DROP PRIMARY KEY FOR TABLE [__AUDIT__CITY]
 if exists(select * from sys.objects where name = 'PK___AUDIT__CITY' and type = 'PK' and type_desc = 'PRIMARY_KEY_CONSTRAINT')
 ALTER TABLE [dbo].[__AUDIT__CITY] DROP CONSTRAINT [PK___AUDIT__CITY]
@@ -242,6 +311,26 @@ GO
 --##SECTION END [AUDIT TABLES PK]
 
 --##SECTION BEGIN [CREATE INDEXES]
+
+--DELETE INDEX
+if exists(select * from sys.indexes where name = 'IDX_CANADAPOSTALCODE_POSTALCODE' and type_desc = 'CLUSTERED')
+DROP INDEX [IDX_CANADAPOSTALCODE_POSTALCODE] ON [dbo].[CanadaPostalCode]
+GO
+
+--INDEX FOR TABLE [CanadaPostalCode] COLUMNS:[PostalCode]
+if not exists(select * from sys.indexes where name = 'IDX_CANADAPOSTALCODE_POSTALCODE') and exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'PostalCode' and o.name = 'CanadaPostalCode')
+CREATE NONCLUSTERED INDEX [IDX_CANADAPOSTALCODE_POSTALCODE] ON [dbo].[CanadaPostalCode] ([PostalCode] ASC)
+GO
+
+--DELETE INDEX
+if exists(select * from sys.indexes where name = 'IDX_CANADAPOSTALCODE_CITY' and type_desc = 'CLUSTERED')
+DROP INDEX [IDX_CANADAPOSTALCODE_CITY] ON [dbo].[CanadaPostalCode]
+GO
+
+--INDEX FOR TABLE [CanadaPostalCode] COLUMNS:[City]
+if not exists(select * from sys.indexes where name = 'IDX_CANADAPOSTALCODE_CITY') and exists (select * from syscolumns c inner join sysobjects o on c.id = o.id where c.name = 'City' and o.name = 'CanadaPostalCode')
+CREATE NONCLUSTERED INDEX [IDX_CANADAPOSTALCODE_CITY] ON [dbo].[CanadaPostalCode] ([City] ASC)
+GO
 
 --DELETE INDEX
 if exists(select * from sys.indexes where name = 'IDX_CITY_STATE' and type_desc = 'CLUSTERED')
@@ -330,6 +419,26 @@ GO
 --##SECTION END [TENANT INDEXES]
 
 --##SECTION BEGIN [REMOVE DEFAULTS]
+
+--BEGIN DEFAULTS FOR TABLE [CanadaPostalCode]
+DECLARE @defaultName varchar(max)
+SET @defaultName = (SELECT d.name FROM sys.columns c inner join sys.default_constraints d on c.column_id = d.parent_column_id and c.object_id = d.parent_object_id inner join sys.objects o on d.parent_object_id = o.object_id where o.name = 'CanadaPostalCode' and c.name = 'City')
+if @defaultName IS NOT NULL
+exec('ALTER TABLE [CanadaPostalCode] DROP CONSTRAINT ' + @defaultName)
+SET @defaultName = (SELECT d.name FROM sys.columns c inner join sys.default_constraints d on c.column_id = d.parent_column_id and c.object_id = d.parent_object_id inner join sys.objects o on d.parent_object_id = o.object_id where o.name = 'CanadaPostalCode' and c.name = 'Latitude')
+if @defaultName IS NOT NULL
+exec('ALTER TABLE [CanadaPostalCode] DROP CONSTRAINT ' + @defaultName)
+SET @defaultName = (SELECT d.name FROM sys.columns c inner join sys.default_constraints d on c.column_id = d.parent_column_id and c.object_id = d.parent_object_id inner join sys.objects o on d.parent_object_id = o.object_id where o.name = 'CanadaPostalCode' and c.name = 'Longitude')
+if @defaultName IS NOT NULL
+exec('ALTER TABLE [CanadaPostalCode] DROP CONSTRAINT ' + @defaultName)
+SET @defaultName = (SELECT d.name FROM sys.columns c inner join sys.default_constraints d on c.column_id = d.parent_column_id and c.object_id = d.parent_object_id inner join sys.objects o on d.parent_object_id = o.object_id where o.name = 'CanadaPostalCode' and c.name = 'PostalCode')
+if @defaultName IS NOT NULL
+exec('ALTER TABLE [CanadaPostalCode] DROP CONSTRAINT ' + @defaultName)
+SET @defaultName = (SELECT d.name FROM sys.columns c inner join sys.default_constraints d on c.column_id = d.parent_column_id and c.object_id = d.parent_object_id inner join sys.objects o on d.parent_object_id = o.object_id where o.name = 'CanadaPostalCode' and c.name = 'RowId')
+if @defaultName IS NOT NULL
+exec('ALTER TABLE [CanadaPostalCode] DROP CONSTRAINT ' + @defaultName)
+--END DEFAULTS FOR TABLE [CanadaPostalCode]
+GO
 
 --BEGIN DEFAULTS FOR TABLE [City]
 DECLARE @defaultName varchar(max)

@@ -70,6 +70,8 @@ namespace Gravitybox.GeoLocation.EFDAL
 		/// </summary>
 		public static System.Type GetFieldType(this Gravitybox.GeoLocation.EFDAL.GeoLocationEntities context, Enum field)
 		{
+			if (field is Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode.FieldNameConstants)
+				return Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode.GetFieldType((Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode.FieldNameConstants)field);
 			if (field is Gravitybox.GeoLocation.EFDAL.Entity.City.FieldNameConstants)
 				return Gravitybox.GeoLocation.EFDAL.Entity.City.GetFieldType((Gravitybox.GeoLocation.EFDAL.Entity.City.FieldNameConstants)field);
 			if (field is Gravitybox.GeoLocation.EFDAL.Entity.State.FieldNameConstants)
@@ -108,6 +110,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 		{
 			switch (entityType)
 			{
+				case EntityMappingConstants.CanadaPostalCode: return typeof(Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode);
 				case EntityMappingConstants.City: return typeof(Gravitybox.GeoLocation.EFDAL.Entity.City);
 				case EntityMappingConstants.State: return typeof(Gravitybox.GeoLocation.EFDAL.Entity.State);
 				case EntityMappingConstants.Zip: return typeof(Gravitybox.GeoLocation.EFDAL.Entity.Zip);
@@ -410,7 +413,16 @@ namespace Gravitybox.GeoLocation.EFDAL
 
 			var sb = new System.Text.StringBuilder();
 			#region Per table code
-			if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.City))
+			if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode))
+			{
+				sb.AppendLine("set rowcount " + optimizer.ChunkSize + ";");
+				sb.AppendLine("delete [X] from [dbo].[CanadaPostalCode] [X] inner join (");
+				sb.AppendLine(((IQueryable<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode>)query).Select(x => new { x.RowId }).ToString());
+				sb.AppendLine(") AS [Extent2]");
+				sb.AppendLine("on [X].[RowId] = [Extent2].[RowId]");
+				sb.AppendLine("select @@ROWCOUNT");
+			}
+			else if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.City))
 			{
 				sb.AppendLine("set rowcount " + optimizer.ChunkSize + ";");
 				sb.AppendLine("delete [X] from [dbo].[City] [X] inner join (");
@@ -725,7 +737,21 @@ namespace Gravitybox.GeoLocation.EFDAL
 
 			var sb = new System.Text.StringBuilder();
 			#region Per table code
-			if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.City))
+			if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode))
+			{
+				sb.AppendLine("set rowcount " + optimizer.ChunkSize + ";");
+				foreach (var item in mapping.Where(x => x.SqlList.Any()).ToList())
+				{
+					sb.AppendLine("UPDATE [X] SET");
+					sb.AppendLine(string.Join(", ", item.SqlList));
+					sb.AppendLine("FROM [" + item.Schema + "].[" + item.TableName + "] AS [X] INNER JOIN (");
+					sb.AppendLine(((IQueryable<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode>)query).Select(x => new { x.RowId }).ToString());
+					sb.AppendLine(") AS [Extent2]");
+					sb.AppendLine("on [X].[RowId] = [Extent2].[RowId]");
+					sb.AppendLine("select @@ROWCOUNT");
+				}
+			}
+			else if (typeof(T) == typeof(Gravitybox.GeoLocation.EFDAL.Entity.City))
 			{
 				sb.AppendLine("set rowcount " + optimizer.ChunkSize + ";");
 				foreach (var item in mapping.Where(x => x.SqlList.Any()).ToList())

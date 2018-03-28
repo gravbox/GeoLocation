@@ -180,7 +180,8 @@ namespace Gravitybox.GeoLocation.EFDAL
 		{
 			field = field.Replace("[", string.Empty).Replace("]", string.Empty);
 			string realTable = string.Empty;
-			if (parentTable == "City") realTable = Gravitybox.GeoLocation.EFDAL.Entity.City.GetTableFromFieldNameSqlMapping(field);
+			if (parentTable == "CanadaPostalCode") realTable = Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode.GetTableFromFieldNameSqlMapping(field);
+			else if (parentTable == "City") realTable = Gravitybox.GeoLocation.EFDAL.Entity.City.GetTableFromFieldNameSqlMapping(field);
 			else if (parentTable == "State") realTable = Gravitybox.GeoLocation.EFDAL.Entity.State.GetTableFromFieldNameSqlMapping(field);
 			else if (parentTable == "Zip") realTable = Gravitybox.GeoLocation.EFDAL.Entity.Zip.GetTableFromFieldNameSqlMapping(field);
 			LinqSQLFromClause sqlFromClause = this.GetByTable(realTable);
@@ -475,6 +476,10 @@ namespace Gravitybox.GeoLocation.EFDAL
 				//Do all field replacements
 				if (_type == ObjectTypeConstants.Table)
 				{
+					if (fromClause.TableName == "CanadaPostalCode")
+					{
+						childTables.Add(fromClause);
+					}
 					if (fromClause.TableName == "City")
 					{
 						childTables.Add(fromClause);
@@ -505,7 +510,8 @@ namespace Gravitybox.GeoLocation.EFDAL
 				string realTable = string.Empty;
 				if (_type == ObjectTypeConstants.Table)
 				{
-					if (clause.TableName == "City") realTable = Gravitybox.GeoLocation.EFDAL.Entity.City.GetTableFromFieldAliasSqlMapping(field.Alias);
+					if (clause.TableName == "CanadaPostalCode") realTable = Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode.GetTableFromFieldAliasSqlMapping(field.Alias);
+					else if (clause.TableName == "City") realTable = Gravitybox.GeoLocation.EFDAL.Entity.City.GetTableFromFieldAliasSqlMapping(field.Alias);
 					else if (clause.TableName == "State") realTable = Gravitybox.GeoLocation.EFDAL.Entity.State.GetTableFromFieldAliasSqlMapping(field.Alias);
 					else if (clause.TableName == "Zip") realTable = Gravitybox.GeoLocation.EFDAL.Entity.Zip.GetTableFromFieldAliasSqlMapping(field.Alias);
 				}
@@ -533,6 +539,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 			{
 				switch (tableInfo.TableName)
 				{
+					case "CanadaPostalCode": return Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode.GetRemappedLinqSql(whereClause, tableInfo.Alias, fromLinkList);
 					case "City": return Gravitybox.GeoLocation.EFDAL.Entity.City.GetRemappedLinqSql(whereClause, tableInfo.Alias, fromLinkList);
 					case "State": return Gravitybox.GeoLocation.EFDAL.Entity.State.GetRemappedLinqSql(whereClause, tableInfo.Alias, fromLinkList);
 					case "Zip": return Gravitybox.GeoLocation.EFDAL.Entity.Zip.GetRemappedLinqSql(whereClause, tableInfo.Alias, fromLinkList);
@@ -615,6 +622,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 					LinqSQLFromClause clause = _fromLinkList.FirstOrDefault(x => x.Alias == table.Replace("[", string.Empty).Replace("]", string.Empty));
 					switch (clause.TableName)
 					{
+						case "CanadaPostalCode": alias = Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode.GetFieldAliasFromFieldNameSqlMapping(field); break;
 						case "City": alias = Gravitybox.GeoLocation.EFDAL.Entity.City.GetFieldAliasFromFieldNameSqlMapping(field); break;
 						case "State": alias = Gravitybox.GeoLocation.EFDAL.Entity.State.GetFieldAliasFromFieldNameSqlMapping(field); break;
 						case "Zip": alias = Gravitybox.GeoLocation.EFDAL.Entity.Zip.GetFieldAliasFromFieldNameSqlMapping(field); break;

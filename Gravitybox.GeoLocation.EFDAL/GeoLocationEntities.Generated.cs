@@ -30,6 +30,10 @@ namespace Gravitybox.GeoLocation.EFDAL
 	public enum EntityMappingConstants
 	{
 		/// <summary>
+		/// A mapping for the the CanadaPostalCode entity
+		/// </summary>
+		CanadaPostalCode,
+		/// <summary>
 		/// A mapping for the the City entity
 		/// </summary>
 		City,
@@ -80,7 +84,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 		private static Dictionary<string, SequentialIdGenerator> _sequentialIdGeneratorCache = new Dictionary<string, SequentialIdGenerator>();
 		private static object _seqCacheLock = new object();
 
-		private const string _version = "0.0.0.3.16";
+		private const string _version = "0.0.0.3.20";
 		private const string _modelKey = "792c16d4-9353-4f34-bf2b-4c66aa688643";
 
 		/// <summary />
@@ -244,12 +248,20 @@ namespace Gravitybox.GeoLocation.EFDAL
 			#endregion
 
 			#region Map Tables
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode>().ToTable("CanadaPostalCode", "dbo");
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.City>().ToTable("City", "dbo");
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.State>().ToTable("State", "dbo");
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.Zip>().ToTable("Zip", "dbo");
 			#endregion
 
 			#region Setup Fields
+
+			//Field setup for CanadaPostalCode entity
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode>().Property(d => d.City).IsRequired().HasMaxLength(100).HasColumnType("VARCHAR");
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode>().Property(d => d.Latitude).IsOptional();
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode>().Property(d => d.Longitude).IsOptional();
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode>().Property(d => d.PostalCode).IsRequired().HasMaxLength(10).HasColumnType("VARCHAR");
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode>().Property(d => d.RowId).IsRequired().HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
 
 			//Field setup for City entity
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.City>().Property(d => d.CityId).IsRequired().HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
@@ -293,6 +305,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 
 			#region Primary Keys
 
+			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode>().HasKey(x => new { x.RowId });
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.City>().HasKey(x => new { x.CityId });
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.State>().HasKey(x => new { x.StateId });
 			modelBuilder.Entity<Gravitybox.GeoLocation.EFDAL.Entity.Zip>().HasKey(x => new { x.ZipId });
@@ -429,6 +442,11 @@ namespace Gravitybox.GeoLocation.EFDAL
 		}
 
 		#region Entity Sets
+
+		/// <summary>
+		/// Entity set for CanadaPostalCode
+		/// </summary>
+		public virtual DbSet<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode> CanadaPostalCode { get; set; }
 
 		/// <summary>
 		/// Entity set for City
@@ -573,6 +591,10 @@ namespace Gravitybox.GeoLocation.EFDAL
 				audit.ModifiedBy = _contextStartup.Modifer;
 			}
 			if (false) { }
+			else if (entity is Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode)
+			{
+				this.CanadaPostalCode.Add((Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode)entity);
+			}
 			else if (entity is Gravitybox.GeoLocation.EFDAL.Entity.City)
 			{
 				this.City.Add((Gravitybox.GeoLocation.EFDAL.Entity.City)entity);
@@ -663,6 +685,12 @@ namespace Gravitybox.GeoLocation.EFDAL
 		#region IGeoLocation Members
 
 		/// <summary />
+		IQueryable<Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode> Gravitybox.GeoLocation.EFDAL.IGeoLocationEntities.CanadaPostalCode
+		{
+			get { return this.CanadaPostalCode.AsQueryable(); }
+		}
+
+		/// <summary />
 		IQueryable<Gravitybox.GeoLocation.EFDAL.Entity.City> Gravitybox.GeoLocation.EFDAL.IGeoLocationEntities.City
 		{
 			get { return this.City.AsQueryable(); }
@@ -710,6 +738,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 		/// </summary>
 		public static EntityMappingConstants GetEntityFromField(Enum field)
 		{
+			if (field is Gravitybox.GeoLocation.EFDAL.Entity.CanadaPostalCode.FieldNameConstants) return Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.CanadaPostalCode;
 			if (field is Gravitybox.GeoLocation.EFDAL.Entity.City.FieldNameConstants) return Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.City;
 			if (field is Gravitybox.GeoLocation.EFDAL.Entity.State.FieldNameConstants) return Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.State;
 			if (field is Gravitybox.GeoLocation.EFDAL.Entity.Zip.FieldNameConstants) return Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.Zip;
@@ -727,6 +756,7 @@ namespace Gravitybox.GeoLocation.EFDAL
 		{
 			switch (table)
 			{
+				case Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.CanadaPostalCode: return new Gravitybox.GeoLocation.EFDAL.Entity.Metadata.CanadaPostalCodeMetadata();
 				case Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.City: return new Gravitybox.GeoLocation.EFDAL.Entity.Metadata.CityMetadata();
 				case Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.State: return new Gravitybox.GeoLocation.EFDAL.Entity.Metadata.StateMetadata();
 				case Gravitybox.GeoLocation.EFDAL.EntityMappingConstants.Zip: return new Gravitybox.GeoLocation.EFDAL.Entity.Metadata.ZipMetadata();

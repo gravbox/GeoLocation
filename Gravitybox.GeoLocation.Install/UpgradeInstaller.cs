@@ -33,7 +33,7 @@ namespace Gravitybox.GeoLocation.Install
         internal const string DEFAULT_NAMESPACE = "Gravitybox.GeoLocation.Install";
         internal const string MODELKEY = "792c16d4-9353-4f34-bf2b-4c66aa688643";
         private GeneratedVersion _previousVersion = null;
-        private static GeneratedVersion _upgradeToVersion = new GeneratedVersion(0, 0, 0, 3, 16);
+        private static GeneratedVersion _upgradeToVersion = new GeneratedVersion(0, 0, 0, 3, 20);
         private InstallSetup _setup = null;
         private System.Data.SqlClient.SqlConnection _connection;
         private System.Data.SqlClient.SqlTransaction _transaction;
