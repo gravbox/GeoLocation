@@ -187,6 +187,25 @@ namespace Gravitybox.GeoLocation.LocationService
                         return retval;
                     }
 
+                    //Check Canada postal code
+                    //If found one then return it
+                    var cpostTerm = term.Replace(" ", string.Empty);
+                    if (cpostTerm.Length == 6)
+                    {
+                        var cpost = context.CanadaPostalCode.FirstOrDefault(x => x.PostalCode == cpostTerm);
+                        if (cpost != null)
+                        {
+                            retval.Add(new EFDAL.Entity.Zip
+                            {
+                                City = cpost.City,
+                                Latitude = cpost.Latitude,
+                                Longitude = cpost.Longitude,
+                                Name = cpost.PostalCode,
+                            });
+                            return retval;
+                        }
+                    }
+
                     //If two strings with comma then assume city state
                     var arr = term.Split(',');
                     if (arr.Length == 2)
