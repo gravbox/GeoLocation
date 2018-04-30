@@ -16,4 +16,4 @@ Create a web site in IIS and point to the binaries for the **Gravitybox.Webservi
 The service has several methods that allow you to get a ZipInfo object by ZIP code, coordinate, or city/state. The generic **GetLookup** method will figure out what was sent in and do its best to return the best answer.
 
 #### Canada
-It now supports supports Canadian postal codes. Oh yea?
+It now supports Canadian postal codes. Oh yea?
