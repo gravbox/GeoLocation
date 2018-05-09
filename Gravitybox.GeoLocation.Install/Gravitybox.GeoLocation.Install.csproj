@@ -211,6 +211,7 @@
   <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="3_GeneratedTablesAndData\CreateData_2_canada.zip" />
+    <EmbeddedResource Include="3_GeneratedTablesAndData\CreateData_2b_canada.zip" />
     <None Include="Debug\cities.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

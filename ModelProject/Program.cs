@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using Gravitybox.GeoLocation.EFDAL;
+using Gravitybox.GeoLocation.EFDAL.Entity;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,60 @@ namespace ModelProject
             //ResetPopulations();
             //CleanCity();
             //DumpSQL();
+            //CheckCanada();
+
+            Console.WriteLine("Press <ENTER> to end...");
+            Console.ReadLine();
+        }
+
+        private static void CheckCanada()
+        {
+            try
+            {
+                var notFound = 0;
+                var total = 0;
+                var missed = 0;
+                var connectionString = @"server=.\SQL2014;initial catalog=GeoLocation;integrated security=SSPI;";
+                using (var context = new GeoLocationEntities(connectionString))
+                {
+                    using (var textReader = File.OpenText(@"C:\temp\CanadianZipCodes201805.csv"))
+                    {
+                        using (var csv = new CsvReader(textReader))
+                        {
+                            while (csv.Read())
+                            {
+                                var postalCode = csv.GetField<string>(0).Replace(" ", "").Trim();
+                                var city = csv.GetField<string>(1);
+                                var prov = csv.GetField<string>(2);
+
+                                if (!context.CanadaPostalCode.Any(x => x.PostalCode == postalCode))
+                                {
+                                    notFound++;
+                                    Console.WriteLine($"Total={total}, NotFound={notFound}, PostalCode={postalCode}");
+
+                                    //Get same city
+                                    var template = context.CanadaPostalCode.FirstOrDefault(x => x.City == city);
+
+                                    if (template != null)
+                                    {
+                                        //Add new
+                                        context.AddItem(new CanadaPostalCode { PostalCode = postalCode, City = template.City, Latitude = template.Latitude, Longitude = template.Longitude });
+                                        context.SaveChanges();
+                                    }
+                                    else missed++;
+                                }
+                                total++;
+                            }
+                        }
+                    }
+                }
+
+                Console.WriteLine($"Total={total}, NotFound={notFound}, Missed={missed}");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         private static void DumpSQL()
