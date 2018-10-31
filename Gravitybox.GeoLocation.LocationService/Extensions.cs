@@ -26,6 +26,7 @@ namespace Gravitybox.GeoLocation.LocationService
                 Name = zip.Name,
                 City = zip.City,
                 State = zip.State,
+                Country = zip.Country ?? "US",
             };
             if (zip.Latitude != null && zip.Longitude != null)
             {

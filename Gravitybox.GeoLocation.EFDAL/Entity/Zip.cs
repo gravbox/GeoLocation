@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Gravitybox.GeoLocation.EFDAL.Entity
 {
     partial class Zip
@@ -7,5 +9,9 @@ namespace Gravitybox.GeoLocation.EFDAL.Entity
         {
             return $"{this.City}, {this.State} {this.Name}";
         }
+
+        /// <summary />
+        [NotMapped]
+        public string Country { get; set; }
     }
 }

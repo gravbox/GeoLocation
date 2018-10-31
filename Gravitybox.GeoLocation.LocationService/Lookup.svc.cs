@@ -31,9 +31,9 @@ namespace Gravitybox.GeoLocation.LocationService
                     if (z == null)
                     {
                         var sb = new StringBuilder();
-                        sb.AppendLine("select top 1 z.*, dbo.CalcDistance(" + latitude + ", " + longitude + ", z.Latitude, z.Longitude) as distance");
-                        sb.AppendLine("from zip z");
-                        sb.AppendLine("order by dbo.CalcDistance(" + latitude + ", " + longitude + ", z.Latitude, z.Longitude)");
+                        sb.AppendLine($"select top 1 z.*, dbo.CalcDistance({latitude}, {longitude}, z.Latitude, z.Longitude) as distance");
+                        sb.AppendLine("from [ZIP] z");
+                        sb.AppendLine($"order by dbo.CalcDistance({latitude}, {longitude}, z.Latitude, z.Longitude)");
 
                         var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["GeoLocationEntities"].ConnectionString;
                         var ds = SqlHelper.GetDataset(connectionString, sb.ToString());
@@ -201,6 +201,7 @@ namespace Gravitybox.GeoLocation.LocationService
                                 Latitude = cpost.Latitude,
                                 Longitude = cpost.Longitude,
                                 Name = cpost.PostalCode,
+                                Country = "Canada",
                             });
                             return retval;
                         }

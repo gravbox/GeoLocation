@@ -22,6 +22,8 @@ namespace Gravitybox.GeoLocation.Interfaces
         public double Latitude { get; set; }
         [DataMember]
         public double Longitude { get; set; }
+        [DataMember]
+        public string Country { get; set; }
 
         public override string ToString()
         {
