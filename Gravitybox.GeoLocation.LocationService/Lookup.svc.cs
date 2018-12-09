@@ -183,7 +183,7 @@ namespace Gravitybox.GeoLocation.LocationService
                             context.Zip
                             .Where(x => x.Name.Contains(term))
                             .ToList());
-                        Logger.LogInfo($"GetLookup: Path1, Count={retval.Count}");
+                        Logger.LogInfo($"GetLookup: Path1, term={term}, Count={retval.Count}");
                         return retval;
                     }
 
@@ -301,7 +301,7 @@ namespace Gravitybox.GeoLocation.LocationService
 
                             retval.AddRange(list);
                         }
-                        Logger.LogInfo($"GetLookup: Path2, Count={retval.Count}");
+                        Logger.LogInfo($"GetLookup: Path2, term={term}, Count={retval.Count}");
                     }
                     else
                     {
@@ -316,12 +316,12 @@ namespace Gravitybox.GeoLocation.LocationService
                                 .ToList()
                                 .Select(x => new EFDAL.Entity.Zip { City = x.z.City, State = x.z.State, Population = x.c?.Population, Latitude = x.z.Latitude, Longitude = x.z.Longitude }) //, Name = x.Name
                                 .OrderByDescending(x => x.Population)
-                                .Distinct(new ZipComparer())                                
+                                .Distinct(new ZipComparer())
                                 .Take(50)
                                 .ToList();
 
                         retval.AddRange(list);
-                        Logger.LogInfo($"GetLookup: Path3, Count={retval.Count}");
+                        Logger.LogInfo($"GetLookup: Path3, term={term}, Count={retval.Count}");
                     }
 
                     return retval;
