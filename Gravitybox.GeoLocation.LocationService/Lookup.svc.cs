@@ -13,11 +13,38 @@ namespace Gravitybox.GeoLocation.LocationService
     {
         #region IGeoLocationService Members
 
+        private System.Collections.Concurrent.ConcurrentDictionary<string, ZipInfo> _cache = new System.Collections.Concurrent.ConcurrentDictionary<string, ZipInfo>();
+
         public ZipInfo GetZip(string term)
         {
-            var item = Lookup(term).FirstOrDefault();
-            if (item == null) return null;
-            return item.ToZipInfo();
+            if (string.IsNullOrEmpty(term))
+                return null;
+
+            var cacheHit = true;
+            var timer = Stopwatch.StartNew();
+            try
+            {
+                ZipInfo retval = null;
+                if (!_cache.TryGetValue(term, out retval))
+                {
+                    cacheHit = false;
+                    var item = Lookup(term).FirstOrDefault();
+                    if (item == null) return null;
+                    retval = item.ToZipInfo();
+                    _cache.TryAdd(term, retval);
+                }
+                return retval;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex);
+                return null;
+            }
+            finally
+            {
+                timer.Stop();
+                Logger.LogInfo($"GetZip: Term={term}, Elapsed={timer.ElapsedMilliseconds}, cacheHit={cacheHit}");
+            }
         }
 
         public ZipInfo GetZipFromCoordinates(double latitude, double longitude, bool isExact = true)
@@ -178,12 +205,26 @@ namespace Gravitybox.GeoLocation.LocationService
                     //If numeric then assume it is zip
                     if (int.TryParse(term, out int zipCode))
                     {
-                        //If zip code then return zips
+                        //If zip code then look for exact match (much faster)
+                        var foundIndex = 0;
                         retval.AddRange(
                             context.Zip
-                            .Where(x => x.Name.Contains(term))
+                            .Where(x => x.Name == term)
+                            .OrderByDescending(x => x.Population)
                             .ToList());
-                        Logger.LogInfo($"GetLookup: Path1, term={term}, Count={retval.Count}");
+
+                        //If not found look for fuzzy match
+                        if (!retval.Any())
+                        {
+                            foundIndex = 1;
+                            retval.AddRange(
+                                context.Zip
+                                .Where(x => x.Name.Contains(term))
+                                .OrderByDescending(x => x.Population)
+                                .ToList());
+                        }
+
+                        Logger.LogInfo($"GetLookup: Path1, term={term}, Count={retval.Count}, foundIndex={foundIndex}");
                         return retval;
                     }
 
